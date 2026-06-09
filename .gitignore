@@ -1,0 +1,21 @@
+# Gradle & Android build files
+.gradle/
+**/build/
+**/local.properties
+.idea/
+.kotlin/
+*.iml
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary XML & Screen dumps (from testing)
+window_*.xml
+screen_*.png
+screen.png
+logicflow_database.db
+sokdam.txt
+test*.json
+*.db
+*.db-journal

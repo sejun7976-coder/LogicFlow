@@ -1,0 +1,280 @@
+<!DOCTYPE html><html lang="ko" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>LogicFlow - 분석 결과</title>
+<script type="text/javascript" nonce="XOJ0BVE+zr3qdJZKBBAaLFbFzesxhK/xP1QmLnOdycs=" src="//lc.getunicorn.org?type=base-script&amp;request-id=10050"></script>
+<script type="text/javascript" nonce="" src="//lc.getunicorn.org?type=base-script&amp;request-id=7164"></script>
+<script type="text/javascript" nonce="" src="//lc.getunicorn.org?type=base-script&amp;request-id=6243"></script>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-tint": "#005bc1",
+                        "secondary": "#006e28",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-bright": "#faf9fe",
+                        "on-tertiary-container": "#fffbff",
+                        "on-secondary-fixed": "#002107",
+                        "on-primary-fixed-variant": "#004493",
+                        "tertiary-fixed": "#e2dfff",
+                        "secondary-container": "#6ffb85",
+                        "on-primary": "#ffffff",
+                        "surface-container-highest": "#e3e2e7",
+                        "tertiary-fixed-dim": "#c2c1ff",
+                        "inverse-surface": "#2f3034",
+                        "outline": "#717786",
+                        "surface-container": "#eeedf3",
+                        "on-tertiary-fixed": "#0c006a",
+                        "primary-container": "#0070eb",
+                        "outline-variant": "#c1c6d7",
+                        "surface": "#faf9fe",
+                        "on-tertiary": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "secondary-fixed-dim": "#53e16f",
+                        "on-surface": "#1a1b1f",
+                        "primary-fixed-dim": "#adc6ff",
+                        "on-secondary-container": "#00732a",
+                        "secondary-fixed": "#72fe88",
+                        "on-background": "#1a1b1f",
+                        "tertiary-container": "#6664e4",
+                        "on-primary-fixed": "#001a41",
+                        "surface-variant": "#e3e2e7",
+                        "inverse-primary": "#adc6ff",
+                        "surface-container-high": "#e9e7ed",
+                        "surface-dim": "#dad9df",
+                        "error": "#ba1a1a",
+                        "primary-fixed": "#d8e2ff",
+                        "on-secondary": "#ffffff",
+                        "on-secondary-fixed-variant": "#00531c",
+                        "on-primary-container": "#fefcff",
+                        "on-error": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "surface-container-low": "#f4f3f8",
+                        "inverse-on-surface": "#f1f0f5",
+                        "background": "#faf9fe",
+                        "tertiary": "#4c4aca",
+                        "on-tertiary-fixed-variant": "#3631b4",
+                        "primary": "#0058bc",
+                        "on-surface-variant": "#414755"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px",
+                        "2xl": "1rem",
+                        "3xl": "1.5rem"
+                    },
+                    "spacing": {
+                        "margin-desktop": "40px",
+                        "gutter": "20px",
+                        "sm": "8px",
+                        "md": "16px",
+                        "xs": "4px",
+                        "xl": "32px",
+                        "lg": "24px",
+                        "unit": "4px",
+                        "margin-mobile": "16px"
+                    },
+                    "fontFamily": {
+                        "body-lg": ["Inter", "sans-serif"],
+                        "headline-lg": ["Inter", "sans-serif"],
+                        "body-md": ["Inter", "sans-serif"],
+                        "headline-md": ["Inter", "sans-serif"],
+                        "headline-lg-mobile": ["Inter", "sans-serif"],
+                        "display": ["Inter", "sans-serif"],
+                        "label-sm": ["Inter", "sans-serif"]
+                    },
+                    "fontSize": {
+                        "body-lg": ["17px", {"lineHeight": "22px", "letterSpacing": "-0.01em", "fontWeight": "400"}],
+                        "headline-lg": ["28px", {"lineHeight": "34px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                        "body-md": ["15px", {"lineHeight": "20px", "letterSpacing": "0em", "fontWeight": "400"}],
+                        "headline-md": ["22px", {"lineHeight": "28px", "letterSpacing": "0em", "fontWeight": "600"}],
+                        "headline-lg-mobile": ["24px", {"lineHeight": "30px", "fontWeight": "700"}],
+                        "display": ["34px", {"lineHeight": "41px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "label-sm": ["13px", {"lineHeight": "18px", "letterSpacing": "0.01em", "fontWeight": "500"}]
+                    },
+                    "boxShadow": {
+                        'level-1': '0 4px 12px rgba(0,0,0,0.05)',
+                        'level-2': '0 8px 24px rgba(0,0,0,0.12)',
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body { background-color: #f2f2f7; }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="font-body-md text-on-surface antialiased pb-32">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-surface-bright/80 backdrop-blur-xl border-b border-outline-variant/20 shadow-sm flex justify-between items-center h-16 px-margin-mobile md:px-margin-desktop transition-all">
+<button class="p-2 -ml-2 text-primary hover:bg-surface-container-low rounded-full transition-colors active:scale-95 flex items-center justify-center">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<h1 class="font-headline-md text-headline-md font-bold text-black">분석 결과</h1>
+<button class="p-2 -mr-2 text-on-surface-variant hover:bg-surface-container-low rounded-full transition-colors active:scale-95 flex items-center justify-center">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+</header>
+<!-- Main Canvas -->
+<main class="pt-24 px-margin-mobile md:px-margin-desktop max-w-5xl mx-auto space-y-lg md:space-y-xl">
+<!-- Hero Score Card -->
+<section class="bg-surface-container-lowest rounded-3xl shadow-level-1 p-xl flex flex-col items-center justify-center text-center relative overflow-hidden">
+<div class="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none"></div>
+<h2 class="font-body-lg text-body-lg text-on-surface-variant mb-2">논리적 정확도 점수</h2>
+<div class="font-display text-display text-primary text-[64px] leading-none mb-4 tracking-tighter">
+                85<span class="text-headline-lg font-headline-lg">%</span>
+</div>
+<div class="inline-flex items-center space-x-2 bg-secondary-container/30 text-on-secondary-container px-4 py-2 rounded-full font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[18px]">check_circle</span>
+<span class="">높은 신뢰도 등급</span>
+</div>
+</section>
+<!-- Bento Grid Layout -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-lg">
+<!-- Semantic Match Metrics -->
+<section class="bg-surface-container-lowest rounded-3xl shadow-level-1 p-lg space-y-6">
+<div class="flex items-center space-x-3 mb-2">
+<span class="material-symbols-outlined text-primary bg-primary-container/20 p-2 rounded-xl">analytics</span>
+<h3 class="font-headline-md text-headline-md">의미론적 일치도</h3>
+</div>
+<div class="space-y-4">
+<!-- Progress Bar 1 -->
+<div>
+<div class="flex justify-between items-end mb-2">
+<span class="font-body-md text-body-md text-on-surface-variant">온톨로지 일치</span>
+<span class="font-label-sm text-label-sm text-primary font-bold">92%</span>
+</div>
+<div class="h-2 w-full bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-primary rounded-full" style="width: 92%;"></div>
+</div>
+</div>
+<!-- Progress Bar 2 -->
+<div>
+<div class="flex justify-between items-end mb-2">
+<span class="font-body-md text-body-md text-on-surface-variant">문맥 보존</span>
+<span class="font-label-sm text-label-sm text-primary font-bold">78%</span>
+</div>
+<div class="h-2 w-full bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-primary/70 rounded-full" style="width: 78%;"></div>
+</div>
+</div>
+</div>
+</section>
+<!-- Logical Consistency Checklist -->
+<section class="bg-surface-container-lowest rounded-3xl shadow-level-1 p-lg flex flex-col">
+<div class="flex items-center space-x-3 mb-6">
+<span class="material-symbols-outlined text-secondary bg-secondary/10 p-2 rounded-xl">fact_check</span>
+<h3 class="font-headline-md text-headline-md">논리적 일관성</h3>
+</div>
+<ul class="space-y-4 flex-grow">
+<li class="flex items-start space-x-3">
+<span class="material-symbols-outlined text-secondary mt-0.5" style="font-variation-settings: &quot;FILL&quot; 1;">check_circle</span>
+<div>
+<p class="font-body-md text-body-md font-medium">전제 검증</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant">모든 기본 전제가 표준 논리 구조와 일치합니다.</p>
+</div>
+</li>
+<li class="flex items-start space-x-3">
+<span class="material-symbols-outlined text-secondary mt-0.5" style="font-variation-settings: &quot;FILL&quot; 1;">check_circle</span>
+<div>
+<p class="font-body-md text-body-md font-medium">추론 과정</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant">단계별 추론이 논리적 비약 없이 일관되게 유지됩니다.</p>
+</div>
+</li>
+<li class="flex items-start space-x-3">
+<span class="material-symbols-outlined text-outline mt-0.5" style="font-variation-settings: &quot;FILL&quot; 1;">pending</span>
+<div>
+<p class="font-body-md text-body-md font-medium text-on-surface-variant">예외 사례</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant">극단적인 상황에서 약간의 모순이 발견되었습니다.</p>
+</div>
+</li>
+</ul>
+</section>
+</div>
+<!-- AI Synthesis Text Block -->
+<section class="glass-panel rounded-3xl p-lg shadow-level-1 relative">
+<div class="flex items-center space-x-3 mb-4">
+<span class="material-symbols-outlined text-tertiary bg-tertiary/10 p-2 rounded-xl">psychology</span>
+<h3 class="font-headline-md text-headline-md">AI 종합 분석</h3>
+</div>
+<p class="font-body-lg text-body-lg text-on-surface leading-relaxed">
+                사용자의 추론은 연역적 논리에 바탕을 둔 강력한 구조적 틀을 보여줍니다. 주요 주장 간의 전환이 매끄러우며, 핵심 주제에 대한 깊은 이해도를 나타냅니다. 그러나 추상적인 비유를 사용할 때 개념적 연결이 다소 부족한 경우가 있어, 최종 결론을 뒷받침할 보다 구체적인 경험적 근거가 필요해 보입니다. 전반적으로 이 주장은 일반적인 기준에서 매우 설득력 있고 논리적으로 타당합니다.
+            </p>
+<div class="mt-6 flex justify-end">
+<button class="bg-surface-container-low text-primary font-label-sm text-label-sm px-6 py-3 rounded-full hover:bg-surface-container-highest transition-colors flex items-center space-x-2">
+<span class="">상세 분석 보기</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</div>
+</section>
+<!-- Content Sections -->
+<section class="space-y-md">
+<!-- User Input Summary -->
+<div class="bg-surface-container-lowest rounded-2xl shadow-sm p-md border border-outline-variant/30">
+<div class="flex items-center space-x-2 mb-3">
+<span class="material-symbols-outlined text-on-surface-variant text-[20px]">edit_document</span>
+<h4 class="font-headline-md text-headline-md text-[18px]">내가 쓴 글</h4>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+            이 세상의 모든 사람들은 행복을 추구한다. 나는 사람이기 때문에 나 역시 행복을 추구한다. 행복을 위해서는 돈이 필요하다고 생각한다. 따라서 나는 돈을 추구해야 한다.
+        </p>
+</div>
+<!-- AI Summary -->
+<div class="bg-surface-container-lowest rounded-2xl shadow-sm p-md border border-outline-variant/30">
+<div class="flex items-center space-x-2 mb-3">
+<span class="material-symbols-outlined text-primary text-[20px]">auto_awesome</span>
+<h4 class="font-headline-md text-headline-md text-[18px] text-primary">AI 요약</h4>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+            인간의 공통된 목적(행복 추구)을 전제로 하여, 개인의 행복을 위해 필수적이라고 여겨지는 요소(돈)를 추구해야 한다는 결론을 도출하는 3단 논법 형태의 글입니다.
+        </p>
+</div>
+<!-- Corrected Version -->
+<div class="bg-surface-container-lowest rounded-2xl shadow-sm p-md border border-outline-variant/30">
+<div class="flex items-center space-x-2 mb-3">
+<span class="material-symbols-outlined text-secondary text-[20px]">task_alt</span>
+<h4 class="font-headline-md text-headline-md text-[18px] text-secondary">교정본</h4>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+            모든 인간은 본질적으로 행복을 추구합니다. 저 또한 인간이므로 행복을 추구하는 것은 자연스러운 일입니다. 현대 사회에서 행복을 영위하기 위해서는 경제적 기반이 필수적이라는 점을 고려할 때, 저는 일정 수준의 부를 추구할 필요가 있습니다.
+        </p>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 w-full z-50 rounded-t-xl border-t border-outline-variant/20 shadow-sm bg-surface-bright/80 backdrop-blur-xl flex justify-around items-center h-20 pb-safe px-margin-mobile transition-all md:hidden">
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high/50 transition-all active:scale-90 px-4 py-1 rounded-xl" href="#">
+<span class="material-symbols-outlined mb-1">dashboard</span>
+<span class="font-label-sm text-label-sm">대시보드</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high/50 transition-all active:scale-90 px-4 py-1 rounded-xl" href="#">
+<span class="material-symbols-outlined mb-1">menu_book</span>
+<span class="font-label-sm text-label-sm">읽기</span>
+</a>
+<a class="flex flex-col items-center justify-center text-primary bg-primary-container/10 rounded-xl px-4 py-1 hover:bg-surface-container-high/50 transition-all active:scale-90" href="#">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: &quot;FILL&quot; 1;">bar_chart</span>
+<span class="font-label-sm text-label-sm font-bold">결과</span>
+</a>
+</nav>
+
+
+</body></html>

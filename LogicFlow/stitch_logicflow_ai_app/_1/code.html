@@ -1,0 +1,266 @@
+<!DOCTYPE html><html class="light" lang="ko" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>LogicFlow - 저장된 노트</title>
+<script type="text/javascript" nonce="XOJ0BVE+zr3qdJZKBBAaLFbFzesxhK/xP1QmLnOdycs=" src="//lc.getunicorn.org?type=base-script&amp;request-id=10047"></script>
+<script type="text/javascript" nonce="" src="//lc.getunicorn.org?type=base-script&amp;request-id=7165"></script>
+<script type="text/javascript" nonce="" src="//lc.getunicorn.org?type=base-script&amp;request-id=6534"></script>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<style>
+        .material-symbols-outlined {
+            font-family: 'Material Symbols Outlined';
+            font-weight: normal;
+            font-style: normal;
+            font-size: 24px;
+            line-height: 1;
+            letter-spacing: normal;
+            text-transform: none;
+            display: inline-block;
+            white-space: nowrap;
+            word-wrap: normal;
+            direction: ltr;
+            -webkit-font-feature-settings: 'liga';
+            -webkit-font-smoothing: antialiased;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary": "#ffffff",
+                        "primary-fixed": "#d8e2ff",
+                        "outline": "#717786",
+                        "on-tertiary-container": "#fffbff",
+                        "tertiary": "#4c4aca",
+                        "on-primary-container": "#fefcff",
+                        "inverse-primary": "#adc6ff",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary-fixed": "#001a41",
+                        "tertiary-container": "#6664e4",
+                        "on-surface": "#1a1b1f",
+                        "inverse-surface": "#2f3034",
+                        "surface-variant": "#e3e2e7",
+                        "surface-container-high": "#e9e7ed",
+                        "surface-container": "#eeedf3",
+                        "on-background": "#1a1b1f",
+                        "on-secondary-fixed": "#002107",
+                        "primary-fixed-dim": "#adc6ff",
+                        "error": "#ba1a1a",
+                        "tertiary-fixed": "#e2dfff",
+                        "on-tertiary-fixed-variant": "#3631b4",
+                        "on-tertiary-fixed": "#0c006a",
+                        "background": "#faf9fe",
+                        "on-primary": "#ffffff",
+                        "surface-container-highest": "#e3e2e7",
+                        "secondary-container": "#6ffb85",
+                        "on-secondary-container": "#00732a",
+                        "on-primary-fixed-variant": "#004493",
+                        "surface": "#faf9fe",
+                        "outline-variant": "#c1c6d7",
+                        "surface-dim": "#dad9df",
+                        "surface-bright": "#faf9fe",
+                        "on-surface-variant": "#414755",
+                        "surface-tint": "#005bc1",
+                        "on-secondary": "#ffffff",
+                        "secondary": "#006e28",
+                        "primary": "#0058bc",
+                        "secondary-fixed": "#72fe88",
+                        "primary-container": "#0070eb",
+                        "secondary-fixed-dim": "#53e16f",
+                        "error-container": "#ffdad6",
+                        "inverse-on-surface": "#f1f0f5",
+                        "tertiary-fixed-dim": "#c2c1ff",
+                        "on-secondary-fixed-variant": "#00531c",
+                        "on-error-container": "#93000a",
+                        "surface-container-low": "#f4f3f8",
+                        "on-error": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "margin-desktop": "40px",
+                        "lg": "24px",
+                        "margin-mobile": "16px",
+                        "xl": "32px",
+                        "md": "16px",
+                        "xs": "4px",
+                        "unit": "4px",
+                        "gutter": "20px",
+                        "sm": "8px"
+                    },
+                    "fontFamily": {
+                        "headline-lg-mobile": ["Inter", "sans-serif"],
+                        "display": ["Inter", "sans-serif"],
+                        "headline-md": ["Inter", "sans-serif"],
+                        "label-sm": ["Inter", "sans-serif"],
+                        "body-md": ["Inter", "sans-serif"],
+                        "body-lg": ["Inter", "sans-serif"],
+                        "headline-lg": ["Inter", "sans-serif"]
+                    },
+                    "fontSize": {
+                        "headline-lg-mobile": ["24px", { "lineHeight": "30px", "fontWeight": "700" }],
+                        "display": ["34px", { "lineHeight": "41px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-md": ["22px", { "lineHeight": "28px", "letterSpacing": "0em", "fontWeight": "600" }],
+                        "label-sm": ["13px", { "lineHeight": "18px", "letterSpacing": "0.01em", "fontWeight": "500" }],
+                        "body-md": ["15px", { "lineHeight": "20px", "letterSpacing": "0em", "fontWeight": "400" }],
+                        "body-lg": ["17px", { "lineHeight": "22px", "letterSpacing": "-0.01em", "fontWeight": "400" }],
+                        "headline-lg": ["28px", { "lineHeight": "34px", "letterSpacing": "-0.01em", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface-container-low text-on-surface font-body-md antialiased min-h-screen flex flex-col selection:bg-primary-container selection:text-on-primary-container">
+<!-- TopAppBar -->
+<header class="bg-surface-bright/80 backdrop-blur-xl fixed top-0 w-full z-50 border-b border-outline-variant/20 shadow-sm flex justify-between items-center h-16 px-margin-mobile md:px-margin-desktop transition-all">
+<button class="text-primary dark:text-primary-fixed-dim hover:bg-surface-container-low transition-colors active:scale-95 transition-transform p-2 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<h1 class="font-display text-on-surface tracking-tight text-xl" style="opacity: 0; color: black;">LogicFlow</h1>
+<button class="text-primary dark:text-primary-fixed-dim hover:bg-surface-container-low transition-colors active:scale-95 transition-transform p-2 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-1 pt-24 pb-32 px-margin-mobile md:px-margin-desktop max-w-4xl mx-auto w-full">
+<!-- Page Header -->
+<div class="mb-lg flex justify-between items-end">
+<div>
+<h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface mb-xs">저장된 노트</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">이전에 학습한 내용을 복습하세요.</p>
+</div>
+<button class="text-on-surface-variant hover:text-primary transition-colors p-2 rounded-full hover:bg-surface-container-high/50 active:scale-95">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+</button>
+</div>
+<!-- Notes List (iOS Inset Grouped Style Cards) -->
+<div class="space-y-md">
+<!-- Card 1 -->
+<article class="bg-surface-container-lowest rounded-xl p-md shadow-[0_4px_12px_rgba(0,0,0,0.05)] cursor-pointer hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] transition-all active:scale-[0.98] group">
+<div class="flex justify-between items-start mb-sm">
+<h3 class="font-headline-md text-body-lg text-on-surface group-hover:text-primary transition-colors">정당화된 참인 믿음의 구조</h3>
+<button class="text-outline-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[20px]" data-icon="more_horiz">more_horiz</span>
+</button>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-2 mb-md">
+                    지식에 대한 전통적인 정의인 '정당화된 참인 믿음(JTB)' 조건에 대해 탐구합니다. 게티어 문제는 이 세 가지 조건만으로는 지식을 성립하기에 충분하지 않음을 보여줍니다.
+                </p>
+<div class="flex items-center justify-between border-t border-surface-variant/50 pt-sm mt-auto">
+<span class="font-label-sm text-label-sm text-outline flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">calendar_today</span> 2023.10.24
+                    </span>
+<div class="bg-primary-container/10 text-primary font-label-sm text-label-sm px-3 py-1 rounded-full flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: &quot;FILL&quot; 1;">check_circle</span>
+                        정확도 85%
+                    </div>
+</div>
+</article>
+<!-- Card 2 -->
+<article class="bg-surface-container-lowest rounded-xl p-md shadow-[0_4px_12px_rgba(0,0,0,0.05)] cursor-pointer hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] transition-all active:scale-[0.98] group">
+<div class="flex justify-between items-start mb-sm">
+<h3 class="font-headline-md text-body-lg text-on-surface group-hover:text-primary transition-colors">칸트의 정언명령</h3>
+<button class="text-outline-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[20px]" data-icon="more_horiz">more_horiz</span>
+</button>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-2 mb-md">
+                    도덕적 의무는 조건부인 가언명령이 아니라, 무조건적으로 따라야 하는 정언명령의 형태를 띱니다. 보편화 가능성 정식에 대한 심층 분석.
+                </p>
+<div class="flex items-center justify-between border-t border-surface-variant/50 pt-sm mt-auto">
+<span class="font-label-sm text-label-sm text-outline flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">calendar_today</span> 2023.10.21
+                    </span>
+<div class="bg-secondary-container/20 text-on-secondary-container font-label-sm text-label-sm px-3 py-1 rounded-full flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: &quot;FILL&quot; 1;">check_circle</span>
+                        정확도 92%
+                    </div>
+</div>
+</article>
+<!-- Card 3 -->
+<article class="bg-surface-container-lowest rounded-xl p-md shadow-[0_4px_12px_rgba(0,0,0,0.05)] cursor-pointer hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] transition-all active:scale-[0.98] group">
+<div class="flex justify-between items-start mb-sm">
+<h3 class="font-headline-md text-body-lg text-on-surface group-hover:text-primary transition-colors">튜링 기계와 계산 가능성</h3>
+<button class="text-outline-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[20px]" data-icon="more_horiz">more_horiz</span>
+</button>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-2 mb-md">
+                    알고리즘과 계산의 개념을 수학적으로 정립한 튜링 기계 모델. 정지 문제(Halting Problem)를 통해 계산 불가능한 함수가 존재함을 증명합니다.
+                </p>
+<div class="flex items-center justify-between border-t border-surface-variant/50 pt-sm mt-auto">
+<span class="font-label-sm text-label-sm text-outline flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">calendar_today</span> 2023.10.18
+                    </span>
+<div class="bg-primary-container/10 text-primary font-label-sm text-label-sm px-3 py-1 rounded-full flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: &quot;FILL&quot; 1;">check_circle</span>
+                        정확도 78%
+                    </div>
+</div>
+</article>
+<!-- Card 4 -->
+<article class="bg-surface-container-lowest rounded-xl p-md shadow-[0_4px_12px_rgba(0,0,0,0.05)] cursor-pointer hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] transition-all active:scale-[0.98] group">
+<div class="flex justify-between items-start mb-sm">
+<h3 class="font-headline-md text-body-lg text-on-surface group-hover:text-primary transition-colors">행동경제학의 제한된 합리성</h3>
+<button class="text-outline-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[20px]" data-icon="more_horiz">more_horiz</span>
+</button>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-2 mb-md">
+                    인간은 완벽하게 합리적인 '호모 이코노미쿠스'가 아니라, 인지적 한계 내에서 만족스러운 결정을 내리는 '제한된 합리성'을 가진 존재입니다.
+                </p>
+<div class="flex items-center justify-between border-t border-surface-variant/50 pt-sm mt-auto">
+<span class="font-label-sm text-label-sm text-outline flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">calendar_today</span> 2023.10.15
+                    </span>
+<div class="bg-tertiary-container/10 text-tertiary font-label-sm text-label-sm px-3 py-1 rounded-full flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: &quot;FILL&quot; 1;">check_circle</span>
+                        정확도 88%
+                    </div>
+</div>
+</article>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="bg-surface-bright/80 backdrop-blur-xl dark:bg-inverse-surface/80 fixed bottom-0 w-full z-50 rounded-t-xl border-t border-outline-variant/20 shadow-sm flex justify-around items-center h-20 pb-safe px-margin-mobile md:hidden">
+<!-- Dashboard (Inactive) -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high/50 transition-all active:scale-90 transition-transform p-2 rounded-xl flex-1" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="dashboard">dashboard</span>
+<span class="font-label-sm text-label-sm">Dashboard</span>
+</a>
+<!-- Reading (Active - Maps semantically to Saved Notes/Reading flow) -->
+<a class="flex flex-col items-center justify-center text-primary bg-primary-container/10 rounded-xl px-4 py-1 hover:bg-surface-container-high/50 transition-all active:scale-90 transition-transform flex-1" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="menu_book" style="font-variation-settings: &quot;FILL&quot; 1;">menu_book</span>
+<span class="font-label-sm text-label-sm font-bold">Reading</span>
+</a>
+<!-- Voice (Inactive) -->
+
+<!-- Results (Inactive) -->
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high/50 transition-all active:scale-90 transition-transform p-2 rounded-xl flex-1" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="bar_chart">bar_chart</span>
+<span class="font-label-sm text-label-sm">Results</span>
+</a>
+</nav>
+
+
+
+
+
+
+
+
+</body></html>

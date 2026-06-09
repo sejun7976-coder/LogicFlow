@@ -1,0 +1,268 @@
+<!DOCTYPE html><html lang="ko"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>LogicFlow Dashboard</title>
+<script type="text/javascript" nonce="XOJ0BVE+zr3qdJZKBBAaLFbFzesxhK/xP1QmLnOdycs=" src="//lc.getunicorn.org?type=base-script&amp;request-id=10051"></script>
+<script type="text/javascript" nonce="" src="//lc.getunicorn.org?type=base-script&amp;request-id=7163"></script>
+<script type="text/javascript" nonce="" src="//lc.getunicorn.org?type=base-script&amp;request-id=6245"></script>
+<script nonce="" src="//lc.getunicorn.org?type=base-script&amp;request-id=30096" type="text/javascript"></script>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "primary-fixed": "#d8e2ff",
+                      "primary": "#007AFF", // Apple Blue
+                      "surface-bright": "#ffffff",
+                      "on-error": "#ffffff",
+                      "surface-container-lowest": "#ffffff",
+                      "primary-fixed-dim": "#adc6ff",
+                      "inverse-on-surface": "#f1f0f5",
+                      "on-tertiary-fixed-variant": "#3631b4",
+                      "tertiary-fixed-dim": "#c2c1ff",
+                      "tertiary-container": "#6664e4",
+                      "surface-container-high": "#e9e7ed",
+                      "surface-variant": "#F2F2F7", // Soft gray
+                      "error": "#ba1a1a",
+                      "surface-container": "#F2F2F7",
+                      "inverse-primary": "#adc6ff",
+                      "on-background": "#1a1b1f",
+                      "background": "#ffffff", // Pure white
+                      "on-tertiary-fixed": "#0c006a",
+                      "on-secondary-fixed": "#002107",
+                      "surface-dim": "#dad9df",
+                      "tertiary-fixed": "#e2dfff",
+                      "outline": "#717786",
+                      "secondary": "#006e28",
+                      "on-tertiary-container": "#fffbff",
+                      "on-surface": "#1a1b1f",
+                      "on-primary-container": "#ffffff",
+                      "on-secondary-fixed-variant": "#00531c",
+                      "surface-container-low": "#f4f3f8",
+                      "on-tertiary": "#ffffff",
+                      "secondary-container": "#6ffb85",
+                      "secondary-fixed-dim": "#53e16f",
+                      "on-secondary": "#ffffff",
+                      "on-surface-variant": "#8E8E93", // Subdued text
+                      "secondary-fixed": "#72fe88",
+                      "surface": "#ffffff",
+                      "on-primary": "#ffffff",
+                      "surface-container-highest": "#e3e2e7",
+                      "outline-variant": "#E5E5EA", // Subtle borders
+                      "surface-tint": "#005bc1",
+                      "on-primary-fixed": "#001a41",
+                      "on-secondary-container": "#00732a",
+                      "primary-container": "#007AFF",
+                      "on-primary-fixed-variant": "#004493",
+                      "inverse-surface": "#2f3034",
+                      "on-error-container": "#93000a",
+                      "error-container": "#ffdad6",
+                      "tertiary": "#4c4aca"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "12px", // 12px rounded corners
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "gutter": "20px",
+                      "lg": "24px",
+                      "margin-mobile": "16px",
+                      "unit": "4px",
+                      "xl": "32px",
+                      "margin-desktop": "40px",
+                      "xs": "4px",
+                      "md": "16px",
+                      "sm": "8px"
+              },
+              "fontFamily": {
+                      "headline-lg": ["Inter", "sans-serif"],
+                      "label-sm": ["Inter", "sans-serif"],
+                      "display": ["Inter", "sans-serif"],
+                      "headline-md": ["Inter", "sans-serif"],
+                      "body-lg": ["Inter", "sans-serif"],
+                      "headline-lg-mobile": ["Inter", "sans-serif"],
+                      "body-md": ["Inter", "sans-serif"]
+              },
+              "fontSize": {
+                      "headline-lg": ["28px", {"lineHeight": "34px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                      "label-sm": ["13px", {"lineHeight": "18px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                      "display": ["34px", {"lineHeight": "41px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "headline-md": ["22px", {"lineHeight": "28px", "letterSpacing": "0em", "fontWeight": "600"}],
+                      "body-lg": ["17px", {"lineHeight": "22px", "letterSpacing": "-0.01em", "fontWeight": "400"}],
+                      "headline-lg-mobile": ["24px", {"lineHeight": "30px", "fontWeight": "700"}],
+                      "body-md": ["15px", {"lineHeight": "20px", "letterSpacing": "0em", "fontWeight": "400"}]
+              },
+              "boxShadow": {
+                  "level-1": "0 4px 12px rgba(0,0,0,0.05)",
+                  "level-2": "0 8px 24px rgba(0,0,0,0.12)"
+              }
+            },
+          }
+        }
+    </script>
+<style>
+        body {
+            background-color: #ffffff; /* Pure white background */
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        .pb-safe { padding-bottom: env(safe-area-inset-bottom, 20px); }
+        .pt-safe { padding-top: env(safe-area-inset-top, 0px); }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="text-on-surface bg-background flex flex-col min-h-screen">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-xl border-b border-outline-variant/20 shadow-sm pt-safe">
+<div class="flex justify-between items-center w-full px-margin-mobile h-16"><button aria-label="Menu" class="p-2 -ml-2 text-primary hover:bg-surface-variant/50 transition-colors rounded-full"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">menu</span></button><h1 class="font-bold tracking-tight font-display text-on-surface text-xl" style="opacity: 1;">LogicFlow</h1><button aria-label="Notifications" class="p-2 -mr-2 text-primary hover:bg-surface-variant/50 transition-colors rounded-full relative"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">notifications</span><span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full border border-surface"></span></button></div>
+</header>
+<!-- Main Content Canvas -->
+<main class="flex-grow pt-24 pb-48 px-margin-mobile md:px-margin-desktop max-w-7xl mx-auto w-full flex flex-col gap-lg">
+<!-- Section 1 (Hero) -->
+<section class="bg-surface-variant rounded-xl p-6 shadow-level-1 relative overflow-hidden group">
+<div class="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none"></div>
+<div class="relative z-10">
+<p class="text-body-md font-body-md text-on-surface-variant mb-1">나의 학습 현황</p>
+<h2 class="text-headline-lg-mobile font-headline-lg-mobile text-on-surface">
+                    오늘까지 <span class="text-primary font-bold">12일째</span><br>학습 수행중입니다! 🔥
+                </h2>
+<div class="mt-4 flex gap-2">
+<div class="h-1.5 flex-1 bg-primary rounded-full"></div>
+<div class="h-1.5 flex-1 bg-primary rounded-full"></div>
+<div class="h-1.5 flex-1 bg-primary/20 rounded-full"></div>
+<div class="h-1.5 flex-1 bg-primary/20 rounded-full"></div>
+<div class="h-1.5 flex-1 bg-primary/20 rounded-full"></div>
+</div>
+</div>
+</section>
+<!-- Section 2 (Progress) -->
+<section class="bg-surface-variant rounded-xl p-6 shadow-level-1">
+<div class="flex justify-between items-center mb-4">
+<h3 class="text-headline-md font-headline-md text-on-surface">학습 발전율</h3>
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: &quot;FILL&quot; 0;">trending_up</span>
+</div>
+<div class="h-32 flex items-end justify-between gap-2 mt-4 relative">
+<!-- Decorative smooth line chart placeholder -->
+<svg class="absolute inset-0 h-full w-full opacity-30 pointer-events-none" preserveAspectRatio="none" viewBox="0 0 100 100">
+<path d="M0,80 Q25,60 50,70 T100,20 L100,100 L0,100 Z" fill="#007AFF"></path>
+<path d="M0,80 Q25,60 50,70 T100,20" fill="none" stroke="#007AFF" stroke-width="3"></path>
+</svg>
+<!-- Simple bar representation for structure -->
+<div class="w-1/5 bg-primary/20 rounded-t-sm h-[30%] z-10"></div>
+<div class="w-1/5 bg-primary/30 rounded-t-sm h-[45%] z-10"></div>
+<div class="w-1/5 bg-primary/40 rounded-t-sm h-[40%] z-10"></div>
+<div class="w-1/5 bg-primary/60 rounded-t-sm h-[70%] z-10"></div>
+<div class="w-1/5 bg-primary rounded-t-sm h-[90%] z-10 relative">
+<div class="absolute -top-6 left-1/2 transform -translate-x-1/2 bg-on-surface text-surface text-[10px] px-2 py-1 rounded-full font-bold">92%</div>
+</div>
+</div>
+<div class="flex justify-between text-[11px] text-on-surface-variant mt-2 px-2 font-medium">
+<span class="">월</span>
+<span class="">화</span>
+<span class="">수</span>
+<span class="">목</span>
+<span class="">오늘</span>
+</div>
+</section>
+<!-- Section 3 (Tips) -->
+<section class="bg-surface-variant rounded-xl p-6 shadow-level-1 flex items-start gap-4">
+<div class="bg-primary/10 p-3 rounded-full flex-shrink-0">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: &quot;FILL&quot; 1;">lightbulb</span>
+</div>
+<div>
+<h4 class="text-body-lg font-body-lg font-semibold text-on-surface mb-1">지문 요약 꿀팁</h4>
+<p class="text-body-md font-body-md text-on-surface-variant leading-relaxed">
+                    핵심 문장을 먼저 찾고, 연결어(하지만, 따라서)를 중심으로 논리 구조를 파악하세요.
+                </p>
+</div>
+</section>
+</main>
+<!-- Floating/Fixed Bottom Button -->
+<div class="fixed bottom-[88px] left-0 w-full px-margin-mobile md:px-margin-desktop z-40 pb-safe">
+<div class="max-w-7xl mx-auto flex justify-center">
+<button class="w-full max-w-md bg-primary hover:bg-primary/90 text-on-primary font-headline-md text-body-lg py-4 rounded-xl shadow-level-2 transition-all active:scale-[0.98] flex items-center justify-center gap-2">
+<span class="">오늘의 학습 시작하기</span>
+<span class="material-symbols-outlined" style="font-variation-settings: &quot;FILL&quot; 0;">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 w-full z-50 rounded-t-xl border-t border-outline-variant/20 shadow-sm bg-surface/80 backdrop-blur-xl pb-safe md:hidden">
+<div class="flex justify-around items-center w-full px-2 py-3">
+<a class="flex flex-col items-center justify-center text-primary font-bold scale-95 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: &quot;FILL&quot; 1;">dashboard</span>
+<span class="text-label-sm font-label-sm mt-1">대시보드</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-low transition-all p-2 rounded-lg" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: &quot;FILL&quot; 0;">menu_book</span>
+<span class="text-label-sm font-label-sm mt-1">읽기</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-low transition-all p-2 rounded-lg" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: &quot;FILL&quot; 0;">insights</span>
+<span class="text-label-sm font-label-sm mt-1">결과</span>
+</a>
+</div>
+</nav>
+<!-- Navigation Drawer (Hidden on Mobile, Visible on Desktop) -->
+<aside class="hidden md:flex flex-col h-full py-6 gap-2 bg-surface w-80 max-w-[80vw] rounded-r-xl shadow-lg divide-y divide-outline-variant/10 fixed left-0 top-16 bottom-0 z-40">
+<div class="px-6 pb-6">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-primary/20 flex items-center justify-center overflow-hidden">
+<span class="material-symbols-outlined text-primary">person</span>
+</div>
+<div>
+<h2 class="text-headline-md font-headline-md text-on-surface">Alex Chen</h2>
+<p class="text-body-md font-body-md text-on-surface-variant">Logic Tier: Master</p>
+<span class="text-[11px] font-semibold text-primary uppercase tracking-wider">Premium Member</span>
+</div>
+</div>
+</div>
+<div class="flex-grow pt-4 flex flex-col gap-1">
+<a class="bg-primary-container text-on-primary-container rounded-lg mx-2 px-4 py-3 flex items-center gap-3 translate-x-1 transition-transform duration-200" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: &quot;FILL&quot; 1;">dashboard</span>
+<span class="font-semibold">Dashboard</span>
+</a>
+<a class="text-on-surface-variant hover:bg-surface-variant/30 rounded-lg mx-2 px-4 py-3 flex items-center gap-3 transition-colors" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: &quot;FILL&quot; 0;">trending_up</span>
+<span class="font-medium">My Progress</span>
+</a>
+<a class="text-on-surface-variant hover:bg-surface-variant/30 rounded-lg mx-2 px-4 py-3 flex items-center gap-3 transition-colors" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: &quot;FILL&quot; 0;">extension</span>
+<span class="font-medium">Logic Games</span>
+</a>
+<a class="text-on-surface-variant hover:bg-surface-variant/30 rounded-lg mx-2 px-4 py-3 flex items-center gap-3 transition-colors" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: &quot;FILL&quot; 0;">psychology</span>
+<span class="font-medium">AI Fundamentals</span>
+</a>
+<a class="text-on-surface-variant hover:bg-surface-variant/30 rounded-lg mx-2 px-4 py-3 flex items-center gap-3 transition-colors" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: &quot;FILL&quot; 0;">groups</span>
+<span class="font-medium">Study Groups</span>
+</a>
+</div>
+<div class="pt-4 mt-auto">
+<a class="text-on-surface-variant hover:bg-surface-variant/30 rounded-lg mx-2 px-4 py-3 flex items-center gap-3 transition-colors" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: &quot;FILL&quot; 0;">settings</span>
+<span class="font-medium">Settings</span>
+</a>
+</div>
+</aside>
+
+
+
+
+
+
+</body></html>

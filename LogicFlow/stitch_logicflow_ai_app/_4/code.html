@@ -1,0 +1,243 @@
+<!DOCTYPE html><html lang="ko"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>지문 읽기 - LogicFlow</title>
+<script type="text/javascript" nonce="XOJ0BVE+zr3qdJZKBBAaLFbFzesxhK/xP1QmLnOdycs=" src="//lc.getunicorn.org?type=base-script&amp;request-id=10049"></script>
+<script type="text/javascript" nonce="" src="//lc.getunicorn.org?type=base-script&amp;request-id=7162"></script>
+<script type="text/javascript" nonce="" src="//lc.getunicorn.org?type=base-script&amp;request-id=6244"></script>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-tint": "#005bc1",
+                      "secondary": "#006e28",
+                      "surface-container-lowest": "#ffffff",
+                      "surface-bright": "#faf9fe",
+                      "on-tertiary-container": "#fffbff",
+                      "on-secondary-fixed": "#002107",
+                      "on-primary-fixed-variant": "#004493",
+                      "tertiary-fixed": "#e2dfff",
+                      "secondary-container": "#6ffb85",
+                      "on-primary": "#ffffff",
+                      "surface-container-highest": "#e3e2e7",
+                      "tertiary-fixed-dim": "#c2c1ff",
+                      "inverse-surface": "#2f3034",
+                      "outline": "#717786",
+                      "surface-container": "#eeedf3",
+                      "on-tertiary-fixed": "#0c006a",
+                      "primary-container": "#0070eb",
+                      "outline-variant": "#c1c6d7",
+                      "surface": "#faf9fe",
+                      "on-tertiary": "#ffffff",
+                      "error-container": "#ffdad6",
+                      "secondary-fixed-dim": "#53e16f",
+                      "on-surface": "#1a1b1f",
+                      "primary-fixed-dim": "#adc6ff",
+                      "on-secondary-container": "#00732a",
+                      "secondary-fixed": "#72fe88",
+                      "on-background": "#1a1b1f",
+                      "tertiary-container": "#6664e4",
+                      "on-primary-fixed": "#001a41",
+                      "surface-variant": "#e3e2e7",
+                      "inverse-primary": "#adc6ff",
+                      "surface-container-high": "#e9e7ed",
+                      "surface-dim": "#dad9df",
+                      "error": "#ba1a1a",
+                      "primary-fixed": "#d8e2ff",
+                      "on-secondary": "#ffffff",
+                      "on-secondary-fixed-variant": "#00531c",
+                      "on-primary-container": "#fefcff",
+                      "on-error": "#ffffff",
+                      "on-error-container": "#93000a",
+                      "surface-container-low": "#f4f3f8",
+                      "inverse-on-surface": "#f1f0f5",
+                      "background": "#faf9fe",
+                      "tertiary": "#4c4aca",
+                      "on-tertiary-fixed-variant": "#3631b4",
+                      "primary": "#0058bc",
+                      "on-surface-variant": "#414755"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "margin-desktop": "40px",
+                      "gutter": "20px",
+                      "sm": "8px",
+                      "md": "16px",
+                      "xs": "4px",
+                      "xl": "32px",
+                      "lg": "24px",
+                      "unit": "4px",
+                      "margin-mobile": "16px"
+              },
+              "fontFamily": {
+                      "body-lg": ["Inter", "sans-serif"],
+                      "headline-lg": ["Inter", "sans-serif"],
+                      "body-md": ["Inter", "sans-serif"],
+                      "headline-md": ["Inter", "sans-serif"],
+                      "headline-lg-mobile": ["Inter", "sans-serif"],
+                      "display": ["Inter", "sans-serif"],
+                      "label-sm": ["Inter", "sans-serif"]
+              },
+              "fontSize": {
+                      "body-lg": ["17px", {"lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "400"}],
+                      "headline-lg": ["28px", {"lineHeight": "34px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                      "body-md": ["15px", {"lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "400"}],
+                      "headline-md": ["22px", {"lineHeight": "28px", "letterSpacing": "0em", "fontWeight": "600"}],
+                      "headline-lg-mobile": ["24px", {"lineHeight": "30px", "fontWeight": "700"}],
+                      "display": ["34px", {"lineHeight": "41px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "label-sm": ["13px", {"lineHeight": "18px", "letterSpacing": "0.01em", "fontWeight": "500"}]
+              }
+            }
+          }
+        }
+    </script>
+<style>
+        body {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        .highlight-blue {
+            background-color: rgba(0, 88, 188, 0.1); /* primary with 10% opacity */
+            color: #0058bc; /* primary */
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+        /* Custom scrollbar for webkit */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(113, 119, 134, 0.2);
+            border-radius: 10px;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-surface-container-lowest text-on-surface min-h-screen flex flex-col">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 shadow-sm border-b border-outline-variant/20 bg-surface-bright/80 backdrop-blur-xl">
+<div class="flex justify-between items-center h-16 px-margin-mobile md:px-margin-desktop w-full">
+<button class="p-2 -ml-2 text-primary hover:bg-surface-container-low transition-colors rounded-full active:scale-95">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">menu</span>
+</button>
+<h1 class="font-headline-md text-headline-md text-on-surface">지문 읽기</h1>
+<button class="p-2 -mr-2 text-primary hover:bg-surface-container-low transition-colors rounded-full active:scale-95">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">notifications</span>
+</button>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="flex-grow pt-[88px] pb-[200px] px-margin-mobile md:px-margin-desktop max-w-3xl mx-auto w-full">
+<!-- Metadata Header -->
+<div class="mb-lg flex items-center justify-between">
+<div class="flex items-center space-x-sm">
+<span class="bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm px-3 py-1 rounded-full">논리학 기초</span>
+<span class="text-outline font-label-sm text-label-sm flex items-center"><span class="material-symbols-outlined text-[16px] mr-1">schedule</span> 소요 시간: 12분 30초</span>
+</div>
+</div>
+<!-- Article Title -->
+<h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg mb-xl text-on-surface">정당화된 참인 믿음의 구조</h2>
+<!-- Article Content (Reading Canvas) -->
+<article class="font-body-lg text-body-lg text-on-surface-variant space-y-lg">
+<p>
+                인식론에서 지식(knowledge)을 규정하는 전통적인 접근 방식은 이를 '정당화된 참인 믿음(Justified True Belief, JTB)'으로 간주하는 것이다. 이 정의에 <span class="highlight-blue">따르면</span>, 주체 S가 명제 P를 안다고 말하기 위해서는 세 가지 필수 조건이 충족되어야 한다. 첫째, P는 참이어야 하며(진리 조건), 둘째, S는 P를 믿어야 하고(믿음 조건), 셋째, S가 P를 믿는 데에는 타당한 이유나 증거가 있어야 한다(정당화 조건).
+            </p>
+<div class="bg-surface-container-low p-md rounded-xl border-l-4 border-primary my-xl shadow-[0_4px_12px_rgba(0,0,0,0.05)]">
+<p class="font-body-md text-body-md text-on-surface">
+                    "지식은 단순한 의견이나 우연히 맞은 추측과 구분되어야 한다. 그것은 이성적 근거 위에 구축된 견고한 체계이다."
+                </p>
+</div>
+<p>
+<span class="highlight-blue">그러나</span> 1963년, 철학자 에드먼드 게티어(Edmund Gettier)는 세 쪽짜리 짧은 논문을 통해 이 수천 년 된 정의에 심각한 도전장을 내밀었다. 게티어는 JTB 조건이 모두 충족됨에도 불구하고 그것을 '지식'이라고 부를 수 없는 반례(counterexamples)들을 제시했다. 
+            </p>
+<p>
+                게티어 문제의 핵심은 정당화와 진리 사이의 우연한 결합에 있다. 즉, 주체가 합리적인 증거를 바탕으로 믿음을 형성했고 그 믿음이 우연히 참이 되었을 때, 우리는 이를 지식으로 인정할 수 있는가? <span class="highlight-blue">결과적으로</span>, 현대 인식론은 게티어의 반례를 극복하기 위해 '정당화'의 개념을 재구성하거나, 지식의 성립 조건에 네 번째 요소를 추가하려는 다양한 시도들로 발전해 왔다.
+            </p>
+<p>
+<span class="highlight-blue">반면</span>, 신빙주의(Reliabilism)와 같은 외재주의(Externalism) 접근법은 내적인 정당화 과정보다 진리를 산출하는 메커니즘의 신뢰성에 초점을 맞춘다. 이는 주체가 자신의 믿음에 대한 정당화 근거를 명시적으로 인지하지 못하더라도, 그 믿음이 신뢰할 만한 인지 과정을 통해 형성되었다면 지식으로 인정받을 수 있다는 관점이다. <span class="highlight-blue">따라서</span> 인식론적 구조는 주체의 내적 상태에서 지식 형성의 외적 인과 관계로 그 중심축이 이동하게 된다.
+            </p>
+<!-- Summary Area -->
+<div class="mt-xl mb-xl">
+<div class="relative rounded-2xl border border-outline-variant/50 bg-surface focus-within:border-primary focus-within:ring-1 focus-within:ring-primary shadow-sm overflow-hidden flex flex-col transition-all">
+<!-- background mic icon (mock active state) -->
+<div class="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
+<span class="material-symbols-outlined text-[120px] text-primary opacity-10">mic</span>
+</div>
+<textarea class="w-full bg-transparent border-none focus:ring-0 resize-y min-h-[120px] p-md text-body-md font-body-md text-on-surface z-10 relative placeholder:text-outline" placeholder="본문을 읽고 요약을 작성해보세요..."></textarea>
+<div class="flex items-center justify-between px-md py-sm bg-surface-container-low z-10 relative border-t border-outline-variant/30">
+<div class="flex space-x-2">
+<button aria-label="사진 촬영 (OCR)" class="p-2 text-on-surface-variant hover:text-primary transition-colors rounded-full hover:bg-surface-container-highest active:scale-95 flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">photo_camera</span>
+</button>
+<button aria-label="마이크 (STT)" class="p-2 text-primary bg-primary-container/20 rounded-full hover:bg-primary-container/30 transition-colors active:scale-95 flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">mic</span>
+</button>
+</div>
+<span class="text-xs text-primary font-label-sm animate-pulse">음성 인식 중...</span>
+</div>
+</div>
+</div>
+<!-- End of content fade effect to indicate scrolling -->
+<div class="h-24 bg-gradient-to-t from-surface-container-lowest to-transparent pointer-events-none sticky bottom-0 -mb-24"></div>
+</article>
+</main>
+<!-- Floating Action Button (Fixed above bottom nav) -->
+<div class="fixed bottom-[100px] w-full px-margin-mobile md:px-margin-desktop flex justify-center z-40">
+<button class="bg-primary text-on-primary font-headline-md text-headline-md py-4 px-8 rounded-full shadow-[0_8px_24px_rgba(0,0,0,0.12)] hover:bg-primary/90 active:scale-95 transition-all w-full max-w-sm flex items-center justify-center space-x-2">
+<span>분석 시작</span>
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">arrow_forward</span>
+</button>
+</div>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 w-full z-50 rounded-t-xl shadow-sm border-t border-outline-variant/20 bg-surface-bright/80 backdrop-blur-xl md:hidden">
+<div class="flex justify-around items-center h-20 pb-safe px-margin-mobile">
+<!-- Inactive -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high/50 transition-all active:scale-90 px-4 py-1 rounded-xl">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 0;">dashboard</span>
+<span class="font-label-sm text-label-sm">대시보드</span>
+</button>
+<!-- Active (Reading) -->
+<button class="flex flex-col items-center justify-center text-primary bg-primary-container/10 rounded-xl px-4 py-1 transition-all active:scale-90">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">menu_book</span>
+<span class="font-label-sm text-label-sm">읽기</span>
+</button>
+<!-- Inactive -->
+<button class="flex flex-col items-center justify-center text-on-surface-variant hover:bg-surface-container-high/50 transition-all active:scale-90 px-4 py-1 rounded-xl">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 0;">bar_chart</span>
+<span class="font-label-sm text-label-sm">결과</span>
+</button>
+</div>
+</nav>
+<!-- Desktop Side/Top Nav Placeholder (Hidden on mobile) - Only bottom nav was explicitly requested, but adding structural support for the shell mandate -->
+<nav class="hidden md:flex fixed top-0 right-0 h-16 items-center px-margin-desktop z-50">
+<div class="flex space-x-lg">
+<button class="text-on-surface-variant hover:text-primary transition-colors font-label-sm text-label-sm flex items-center">
+<span class="material-symbols-outlined mr-2 text-[20px]" style="font-variation-settings: 'FILL' 0;">dashboard</span>대시보드
+            </button>
+<button class="text-primary font-bold transition-colors font-label-sm text-label-sm flex items-center">
+<span class="material-symbols-outlined mr-2 text-[20px]" style="font-variation-settings: 'FILL' 1;">menu_book</span>읽기
+            </button>
+<button class="text-on-surface-variant hover:text-primary transition-colors font-label-sm text-label-sm flex items-center">
+<span class="material-symbols-outlined mr-2 text-[20px]" style="font-variation-settings: 'FILL' 0;">bar_chart</span>결과
+            </button>
+</div>
+</nav>
+</body></html>

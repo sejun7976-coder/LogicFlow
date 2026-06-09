@@ -1,0 +1,234 @@
+<!DOCTYPE html><html lang="ko" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Navigation Drawer - Logic Mastery</title>
+<script type="text/javascript" nonce="XOJ0BVE+zr3qdJZKBBAaLFbFzesxhK/xP1QmLnOdycs=" src="//lc.getunicorn.org?type=base-script&amp;request-id=10048"></script>
+<script type="text/javascript" nonce="" src="//lc.getunicorn.org?type=base-script&amp;request-id=7161"></script>
+<script type="text/javascript" nonce="" src="//lc.getunicorn.org?type=base-script&amp;request-id=6241"></script>
+<script type="text/javascript" nonce="" src="//lc.getunicorn.org?type=base-script&amp;request-id=33129"></script>
+<script nonce="" src="//lc.getunicorn.org?type=base-script&amp;request-id=32282" type="text/javascript"></script>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "outline": "#717786",
+                      "on-error-container": "#93000a",
+                      "inverse-surface": "#2f3034",
+                      "tertiary-fixed-dim": "#c2c1ff",
+                      "background": "#faf9fe",
+                      "on-primary-container": "#fefcff",
+                      "surface-variant": "#e3e2e7",
+                      "surface-container-low": "#f4f3f8",
+                      "error": "#ba1a1a",
+                      "primary-fixed-dim": "#adc6ff",
+                      "on-surface": "#1a1b1f",
+                      "on-primary": "#ffffff",
+                      "on-background": "#1a1b1f",
+                      "error-container": "#ffdad6",
+                      "surface": "#faf9fe",
+                      "tertiary-container": "#6664e4",
+                      "on-surface-variant": "#414755",
+                      "tertiary": "#4c4aca",
+                      "on-secondary-fixed": "#002107",
+                      "surface-container-high": "#e9e7ed",
+                      "outline-variant": "#c1c6d7",
+                      "primary-container": "#0070eb",
+                      "surface-dim": "#dad9df",
+                      "surface-container-lowest": "#ffffff",
+                      "surface-container": "#eeedf3",
+                      "on-tertiary": "#ffffff",
+                      "on-secondary-container": "#00732a",
+                      "inverse-on-surface": "#f1f0f5",
+                      "surface-tint": "#005bc1",
+                      "on-secondary-fixed-variant": "#00531c",
+                      "secondary-fixed": "#72fe88",
+                      "on-error": "#ffffff",
+                      "secondary-fixed-dim": "#53e16f",
+                      "primary": "#0058bc",
+                      "secondary-container": "#6ffb85",
+                      "tertiary-fixed": "#e2dfff",
+                      "surface-bright": "#faf9fe",
+                      "on-secondary": "#ffffff",
+                      "secondary": "#006e28",
+                      "inverse-primary": "#adc6ff",
+                      "surface-container-highest": "#e3e2e7",
+                      "on-tertiary-fixed-variant": "#3631b4",
+                      "on-primary-fixed-variant": "#004493",
+                      "on-tertiary-fixed": "#0c006a",
+                      "on-primary-fixed": "#001a41",
+                      "on-tertiary-container": "#fffbff",
+                      "primary-fixed": "#d8e2ff"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "margin-desktop": "40px",
+                      "xl": "32px",
+                      "unit": "4px",
+                      "lg": "24px",
+                      "margin-mobile": "16px",
+                      "gutter": "20px",
+                      "xs": "4px",
+                      "sm": "8px",
+                      "md": "16px"
+              },
+              "fontFamily": {
+                      "label-sm": [
+                              "Inter"
+                      ],
+                      "headline-lg": [
+                              "Inter"
+                      ],
+                      "headline-md": [
+                              "Inter"
+                      ],
+                      "body-md": [
+                              "Inter"
+                      ],
+                      "headline-lg-mobile": [
+                              "Inter"
+                      ],
+                      "display": [
+                              "Inter"
+                      ],
+                      "body-lg": [
+                              "Inter"
+                      ]
+              },
+              "fontSize": {
+                      "label-sm": [
+                              "13px",
+                              {
+                                      "lineHeight": "18px",
+                                      "letterSpacing": "0.01em",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "headline-lg": [
+                              "28px",
+                              {
+                                      "lineHeight": "34px",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "headline-md": [
+                              "22px",
+                              {
+                                      "lineHeight": "28px",
+                                      "letterSpacing": "0em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-md": [
+                              "15px",
+                              {
+                                      "lineHeight": "20px",
+                                      "letterSpacing": "0em",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-lg-mobile": [
+                              "24px",
+                              {
+                                      "lineHeight": "30px",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "display": [
+                              "34px",
+                              {
+                                      "lineHeight": "41px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "body-lg": [
+                              "17px",
+                              {
+                                      "lineHeight": "22px",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "400"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+<style>
+        body {
+            background-color: #faf9fe; /* surface */
+        }
+      </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-surface text-on-surface antialiased h-screen overflow-hidden flex">
+<!-- Overlay Background (Dimming) -->
+<div aria-hidden="true" class="fixed inset-0 bg-on-surface/20 z-[50] backdrop-blur-sm transition-opacity"></div>
+<!-- Navigation Drawer Component -->
+<nav class="fixed inset-y-0 left-0 z-[60] flex flex-col py-lg bg-surface/90 backdrop-blur-xl border-r border-outline-variant shadow-lg h-full w-80 max-w-[85vw] transform transition-transform duration-300 ease-in-out translate-x-0">
+<!-- Header Section -->
+<div class="px-md pb-lg border-b border-outline-variant/30 flex items-center justify-between">
+<!-- Brand Logo -->
+<div class="font-headline-lg text-headline-lg font-bold text-black">
+                LogicFlow</div>
+<!-- Close Button (Mobile Only typically, but included for completeness) -->
+<button class="md:hidden text-on-surface-variant hover:bg-surface-container-low rounded-full p-2 transition-colors">
+<span class="material-symbols-outlined" style="font-variation-settings: &quot;FILL&quot; 0;">close</span>
+</button>
+</div>
+<!-- User Profile Header -->
+
+<!-- Navigation Links -->
+<div class="flex-1 overflow-y-auto py-md space-y-xs">
+<!-- Active Tab -->
+<a class="flex items-center gap-md bg-surface-container-high text-primary rounded-lg p-md mx-sm active:scale-95 transition-all duration-200 ease-out" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: &quot;FILL&quot; 1;">history</span>
+<span class="font-body-md text-body-md font-semibold text-primary">학습 기록</span>
+</a>
+<!-- Inactive Tabs -->
+<a class="flex items-center gap-md text-on-surface-variant p-md mx-sm transition-colors hover:bg-surface-container-low rounded-lg active:scale-95 duration-200 ease-out" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: &quot;FILL&quot; 0;">description</span>
+<span class="font-body-md text-body-md">저장된 노트</span>
+</a>
+<a class="flex items-center gap-md text-on-surface-variant p-md mx-sm transition-colors hover:bg-surface-container-low rounded-lg active:scale-95 duration-200 ease-out" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: &quot;FILL&quot; 0;">bar_chart</span>
+<span class="font-body-md text-body-md">학습 통계</span>
+</a>
+<div class="pt-sm pb-xs mx-md mt-sm border-t border-outline-variant/30"></div>
+<!-- Settings Expanded -->
+
+<!-- Help Center Info Block -->
+
+</div>
+</nav>
+<!-- Main Content Canvas Placeholder -->
+<main class="flex-1 ml-0 md:ml-80 transition-all duration-300 relative z-0 flex items-center justify-center bg-surface-container-lowest">
+<div class="text-center">
+<span class="material-symbols-outlined text-outline/30 text-6xl mb-md" style="font-variation-settings: &quot;FILL&quot; 0;">history</span>
+<h1 class="font-headline-lg text-headline-lg text-on-surface-variant">학습 기록 Canvas</h1>
+<p class="font-body-md text-body-md text-outline mt-sm max-w-md mx-auto">Select an item from the navigation drawer to view its details here.</p>
+</div>
+</main>
+
+
+
+
+
+
+</body></html>
