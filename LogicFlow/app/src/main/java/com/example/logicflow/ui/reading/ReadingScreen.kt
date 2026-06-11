@@ -51,6 +51,26 @@ import com.example.logicflow.ui.theme.PrimaryBlue
 import com.example.logicflow.ui.theme.SuccessEmerald
 import com.example.logicflow.ui.theme.WarningOrange
 import java.util.Locale
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.foundation.Canvas
+import androidx.compose.animation.core.*
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.material.icons.filled.School
+import kotlinx.coroutines.delay
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.boundsInRoot
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.RoundRect
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.PathFillType
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.unit.Dp
+import android.content.SharedPreferences
+import androidx.compose.material.icons.filled.HelpOutline
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -73,6 +93,13 @@ fun ReadingScreen(
     val evalState by viewModel.evaluationState.collectAsState()
 
     val context = LocalContext.current
+    val sharedPrefs = remember { context.getSharedPreferences("logicflow_prefs", Context.MODE_PRIVATE) }
+    var showTutorial by remember { mutableStateOf(!sharedPrefs.getBoolean("tutorial_reading_completed", false)) }
+    var currentTutorialStep by remember { mutableStateOf(0) }
+
+    var parentHeight by remember { mutableStateOf(0) }
+    var filterBounds by remember { mutableStateOf<Rect?>(null) }
+    var listBounds by remember { mutableStateOf<Rect?>(null) }
 
     // Observe evaluation state to navigate
     LaunchedEffect(evalState) {
@@ -84,14 +111,20 @@ fun ReadingScreen(
         }
     }
 
-    if (selectedPassage == null) {
+    Box(modifier = Modifier.fillMaxSize()) {
+        if (selectedPassage == null) {
         // Mode A: Passage Selection Screen
         Scaffold(
             topBar = {
                 LogicFlowTopAppBar(
                     title = "요약할 지문 선택",
                     onMenuClick = onMenuClick,
-                    onNotificationClick = onNotificationClick
+                    onNotificationClick = onNotificationClick,
+                    onHelpClick = {
+                        sharedPrefs.edit().putBoolean("tutorial_reading_completed", false).apply()
+                        currentTutorialStep = 0
+                        showTutorial = true
+                    }
                 )
             },
             bottomBar = {
@@ -108,12 +141,18 @@ fun ReadingScreen(
                     .background(MaterialTheme.colorScheme.background)
                     .padding(padding)
                     .padding(horizontal = 16.dp)
+                    .onGloballyPositioned { coords ->
+                        parentHeight = coords.size.height
+                    }
             ) {
                 Spacer(modifier = Modifier.height(16.dp))
 
                 // Difficulty Filters
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth()
+                        .onGloballyPositioned { coords ->
+                            filterBounds = coords.boundsInRoot()
+                        },
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     val filters = listOf("상", "중", "하")
@@ -162,7 +201,10 @@ fun ReadingScreen(
                 } else {
                     LazyColumn(
                         state = listState,
-                        modifier = Modifier.weight(1f),
+                        modifier = Modifier.weight(1f)
+                            .onGloballyPositioned { coords ->
+                                listBounds = coords.boundsInRoot()
+                            },
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         items(passages, key = { it.id }) { passage ->
@@ -561,6 +603,477 @@ fun ReadingScreen(
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
+            }
+        }
+    }
+
+    if (evalState is EvaluationUiState.Loading) {
+        LoadingAnimationOverlay()
+    }
+
+    if (showTutorial && selectedPassage == null) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .clickable(enabled = false) {}
+        ) {
+            Canvas(modifier = Modifier.fillMaxSize()) {
+                val canvasWidth = size.width
+                val canvasHeight = size.height
+
+                if (currentTutorialStep == 0) {
+                    drawRect(color = Color.Black.copy(alpha = 0.8f))
+                } else {
+                    val path = Path().apply {
+                        fillType = PathFillType.EvenOdd
+                        addRect(Rect(0f, 0f, canvasWidth, canvasHeight))
+
+                        when (currentTutorialStep) {
+                            1 -> {
+                                filterBounds?.let { bounds ->
+                                    addRoundRect(
+                                        RoundRect(
+                                            rect = Rect(
+                                                left = bounds.left - 4.dp.toPx(),
+                                                top = bounds.top - 4.dp.toPx(),
+                                                right = bounds.right + 4.dp.toPx(),
+                                                bottom = bounds.bottom + 4.dp.toPx()
+                                            ),
+                                            cornerRadius = CornerRadius(14.dp.toPx(), 14.dp.toPx())
+                                        )
+                                    )
+                                }
+                            }
+                            2 -> {
+                                listBounds?.let { bounds ->
+                                    addRoundRect(
+                                        RoundRect(
+                                            rect = Rect(
+                                                left = bounds.left - 4.dp.toPx(),
+                                                top = bounds.top - 4.dp.toPx(),
+                                                right = bounds.right + 4.dp.toPx(),
+                                                bottom = bounds.bottom + 4.dp.toPx()
+                                            ),
+                                            cornerRadius = CornerRadius(20.dp.toPx(), 20.dp.toPx())
+                                        )
+                                    )
+                                }
+                            }
+                        }
+                    }
+                    drawPath(path = path, color = Color.Black.copy(alpha = 0.8f))
+                }
+            }
+
+            // Skip button
+            TextButton(
+                onClick = {
+                    sharedPrefs.edit().putBoolean("tutorial_reading_completed", true).apply()
+                    showTutorial = false
+                },
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .statusBarsPadding()
+                    .padding(top = 8.dp, end = 16.dp)
+            ) {
+                Text(
+                    text = "건너뛰기",
+                    color = Color.White.copy(alpha = 0.8f),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 14.sp
+                )
+            }
+
+            // Step Content
+            when (currentTutorialStep) {
+                0 -> {
+                    Card(
+                        shape = RoundedCornerShape(24.dp),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .padding(24.dp)
+                            .fillMaxWidth()
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(24.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(16.dp)
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(72.dp)
+                                    .background(PrimaryBlue.copy(alpha = 0.1f), CircleShape),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.School,
+                                    contentDescription = null,
+                                    tint = PrimaryBlue,
+                                    modifier = Modifier.size(36.dp)
+                                )
+                            }
+
+                            Text(
+                                text = "지문 선택 가이드",
+                                style = MaterialTheme.typography.titleLarge.copy(
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 20.sp
+                                ),
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+
+                            Text(
+                                text = "요약 및 독해 훈련을 진행할 지문을 선택하는 공간입니다. 난이도별로 다양한 지문이 준비되어 있습니다.",
+                                style = MaterialTheme.typography.bodyMedium.copy(
+                                    fontSize = 14.sp,
+                                    lineHeight = 22.sp
+                                ),
+                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
+                                textAlign = TextAlign.Center
+                            )
+
+                            Spacer(modifier = Modifier.height(4.dp))
+
+                            Button(
+                                onClick = { currentTutorialStep = 1 },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(48.dp),
+                                shape = RoundedCornerShape(12.dp),
+                                colors = ButtonDefaults.buttonColors(containerColor = PrimaryBlue)
+                            ) {
+                                Text(
+                                    text = "시작하기",
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 15.sp,
+                                    color = Color.White
+                                )
+                            }
+                        }
+                    }
+                }
+                1 -> {
+                    val density = LocalDensity.current
+                    val topOffset = remember(filterBounds) {
+                        if (filterBounds != null) {
+                            with(density) { filterBounds!!.bottom.toDp() }
+                        } else {
+                            160.dp
+                        }
+                    }
+                    Column(
+                        modifier = Modifier
+                            .align(Alignment.TopCenter)
+                            .padding(top = topOffset + 12.dp)
+                            .padding(horizontal = 20.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        Text(
+                            text = "↑ 난이도 필터링",
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 16.sp
+                        )
+
+                        TutorialGuideCard(
+                            title = "난이도 선택 필터 ⚡",
+                            content = "상, 중, 하 난이도를 터치하여 지문 목록을 필터링할 수 있습니다. 처음 시작할 때는 '하' 난이도부터 차근차근 시작해보는 것을 권장합니다.",
+                            currentStep = 1,
+                            totalSteps = 2,
+                            onNext = { currentTutorialStep = 2 },
+                            onPrev = { currentTutorialStep = 0 }
+                        )
+                    }
+                }
+                2 -> {
+                    val density = LocalDensity.current
+                    val topOffset = remember(listBounds) {
+                        if (listBounds != null) {
+                            with(density) { listBounds!!.top.toDp() }
+                        } else {
+                            240.dp
+                        }
+                    }
+                    Column(
+                        modifier = Modifier
+                            .align(Alignment.TopCenter)
+                            .padding(top = topOffset)
+                            .padding(horizontal = 20.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        TutorialGuideCard(
+                            title = "지문 카드 선택 📄",
+                            content = "원하는 지문을 클릭하면 독해 타이머와 함께 요약 작성 화면이 열립니다. 권장 시간을 확인하고 도전해보세요!",
+                            currentStep = 2,
+                            totalSteps = 2,
+                            onNext = {
+                                sharedPrefs.edit().putBoolean("tutorial_reading_completed", true).apply()
+                                showTutorial = false
+                            },
+                            onPrev = { currentTutorialStep = 1 }
+                        )
+
+                        Text(
+                            text = "↓ 지문 목록 영역",
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 16.sp
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+}
+
+@Composable
+private fun TutorialGuideCard(
+    title: String,
+    content: String,
+    currentStep: Int,
+    totalSteps: Int,
+    onNext: () -> Unit,
+    onPrev: () -> Unit
+) {
+    Card(
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Column(
+            modifier = Modifier.padding(20.dp),
+            verticalArrangement = Arrangement.spacedBy(14.dp)
+        ) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleMedium.copy(
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 17.sp
+                ),
+                color = PrimaryBlue
+            )
+
+            Text(
+                text = content,
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    fontSize = 14.sp,
+                    lineHeight = 22.sp
+                ),
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
+            )
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                // Step Indicator Dots
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    for (i in 1..totalSteps) {
+                        Box(
+                            modifier = Modifier
+                                .size(8.dp)
+                                .background(
+                                    color = if (i == currentStep) PrimaryBlue else MaterialTheme.colorScheme.surfaceVariant,
+                                    shape = CircleShape
+                                )
+                        )
+                    }
+                }
+
+                // Control Buttons
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    TextButton(onClick = onPrev) {
+                        Text(
+                            text = "이전",
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+
+                    Button(
+                        onClick = onNext,
+                        colors = ButtonDefaults.buttonColors(containerColor = PrimaryBlue),
+                        shape = RoundedCornerShape(8.dp),
+                        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
+                    ) {
+                        Text(
+                            text = if (currentStep == totalSteps) "완료" else "다음 ➔",
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun LoadingAnimationOverlay() {
+    val loadingSteps = listOf(
+        "AI가 지문과 요약문의 핵심 맥락을 읽어오고 있습니다...",
+        "요약문의 논리적 정합성 및 인과관계를 비교 분석하고 있습니다...",
+        "지문 속 기본 전제와 숨겨진 추론의 일관성을 검증하는 중입니다...",
+        "더 직관적이고 완성도 높은 맞춤형 첨삭 제안을 작성하고 있습니다...",
+        "최종 채점 점수와 심층 피드백을 생성하고 있습니다..."
+    )
+    
+    var currentStepIndex by remember { mutableStateOf(0) }
+    
+    LaunchedEffect(Unit) {
+        while (true) {
+            delay(2500)
+            currentStepIndex = (currentStepIndex + 1) % loadingSteps.size
+        }
+    }
+    
+    val infiniteTransition = rememberInfiniteTransition(label = "loading_anim")
+    
+    val angle by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 360f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(2000, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "rotation"
+    )
+
+    val scale by infiniteTransition.animateFloat(
+        initialValue = 0.9f,
+        targetValue = 1.1f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1000, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "pulse"
+    )
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Black.copy(alpha = 0.75f))
+            .clickable(enabled = false) {},
+        contentAlignment = Alignment.Center
+    ) {
+        Card(
+            shape = RoundedCornerShape(24.dp),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+            elevation = CardDefaults.cardElevation(defaultElevation = 12.dp),
+            modifier = Modifier
+                .padding(32.dp)
+                .fillMaxWidth()
+        ) {
+            Column(
+                modifier = Modifier
+                    .padding(vertical = 32.dp, horizontal = 24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(20.dp)
+            ) {
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier.size(100.dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(80.dp)
+                            .graphicsLayer {
+                                scaleX = scale
+                                scaleY = scale
+                                alpha = 0.2f
+                            }
+                            .background(PrimaryBlue.copy(alpha = 0.4f), CircleShape)
+                    )
+                    
+                    Canvas(
+                        modifier = Modifier
+                            .size(72.dp)
+                            .graphicsLayer { rotationZ = angle }
+                    ) {
+                        drawArc(
+                            brush = Brush.sweepGradient(
+                                colors = listOf(PrimaryBlue, Color(0xFF00E5FF), PrimaryBlue.copy(alpha = 0.1f))
+                            ),
+                            startAngle = 0f,
+                            sweepAngle = 300f,
+                            useCenter = false,
+                            style = Stroke(
+                                width = 4.dp.toPx(),
+                                cap = StrokeCap.Round
+                            )
+                        )
+                    }
+
+                    Box(
+                        modifier = Modifier
+                            .size(48.dp)
+                            .background(PrimaryBlue.copy(alpha = 0.1f), CircleShape),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.School,
+                            contentDescription = null,
+                            tint = PrimaryBlue,
+                            modifier = Modifier
+                                .size(24.dp)
+                                .graphicsLayer {
+                                    scaleX = scale * 0.95f
+                                    scaleY = scale * 0.95f
+                                }
+                        )
+                    }
+                }
+
+                Text(
+                    text = "AI 요약 채점 및 정밀 분석 중",
+                    style = MaterialTheme.typography.titleLarge.copy(
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp
+                    ),
+                    color = MaterialTheme.colorScheme.onSurface,
+                    textAlign = TextAlign.Center
+                )
+
+                Text(
+                    text = loadingSteps[currentStepIndex],
+                    style = MaterialTheme.typography.bodyMedium.copy(
+                        lineHeight = 22.sp,
+                        fontWeight = FontWeight.Medium
+                    ),
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(48.dp)
+                )
+
+                LinearProgressIndicator(
+                    color = PrimaryBlue,
+                    trackColor = MaterialTheme.colorScheme.surfaceVariant,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(4.dp)
+                        .clip(RoundedCornerShape(2.dp))
+                )
+
+                Text(
+                    text = "분석이 완료되면 자동으로 결과 창으로 이동합니다.",
+                    style = MaterialTheme.typography.labelSmall.copy(fontSize = 11.sp),
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f),
+                    textAlign = TextAlign.Center
+                )
             }
         }
     }

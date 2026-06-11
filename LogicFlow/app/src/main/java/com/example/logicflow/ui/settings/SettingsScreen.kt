@@ -37,6 +37,22 @@ import com.example.logicflow.ui.components.SquircleCard
 import com.example.logicflow.ui.theme.PrimaryBlue
 import com.example.logicflow.ui.theme.SuccessEmerald
 import com.example.logicflow.ui.theme.WarningOrange
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.EmojiEvents
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.text.style.TextAlign
 
 @Composable
 fun SettingsScreen(
@@ -59,6 +75,7 @@ fun SettingsScreen(
     var isPasswordVisible by remember { mutableStateOf(false) }
     var isAiHubPasswordVisible by remember { mutableStateOf(false) }
     var showSavedToast by remember { mutableStateOf(false) }
+    var showLevelUpPreview by remember { mutableStateOf(false) }
 
     var notificationEnabledState by remember(savedNotificationEnabled) { mutableStateOf(savedNotificationEnabled) }
     var notificationHourState by remember(savedNotificationHour) { mutableStateOf(savedNotificationHour) }
@@ -93,8 +110,9 @@ fun SettingsScreen(
         }
     }
 
-    Scaffold(
-        topBar = {
+    Box(modifier = Modifier.fillMaxSize()) {
+        Scaffold(
+            topBar = {
             LogicFlowTopAppBar(
                 title = "설정",
                 onMenuClick = onMenuClick,
@@ -441,6 +459,105 @@ fun SettingsScreen(
                 }
             }
 
+            // ── 튜토리얼 설정 카드 ──────────────────────────────────
+            var showTutorialResetToast by remember { mutableStateOf(false) }
+
+            Text(
+                text = "학습 가이드 및 도움말",
+                style = MaterialTheme.typography.titleLarge.copy(
+                    fontWeight = FontWeight.Bold
+                ),
+                color = MaterialTheme.colorScheme.onBackground
+            )
+
+            SquircleCard {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Text(
+                        text = "대시보드 튜토리얼",
+                        style = MaterialTheme.typography.bodyMedium.copy(
+                            fontWeight = FontWeight.SemiBold
+                        ),
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    Text(
+                        text = "대시보드의 구성과 사용법을 다시 확인하고 싶으시다면 아래 버튼을 눌러주세요. 대시보드로 돌아갔을 때 다시 친절한 가이드가 표시됩니다.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                    )
+
+                    Button(
+                        onClick = {
+                            viewModel.resetTutorial()
+                            showTutorialResetToast = true
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                            contentColor = PrimaryBlue
+                        )
+                    ) {
+                        Text(
+                            text = "대시보드 튜토리얼 다시 보기",
+                            style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold)
+                        )
+                    }
+
+                    if (showTutorialResetToast) {
+                        Text(
+                            text = "튜토리얼이 재설정되었습니다. 대시보드에서 가이드가 실행됩니다.",
+                            color = SuccessEmerald,
+                            style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
+                            modifier = Modifier.align(Alignment.CenterHorizontally)
+                        )
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            SquircleCard {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Text(
+                        text = "등급 승급 연출",
+                        style = MaterialTheme.typography.bodyMedium.copy(
+                            fontWeight = FontWeight.SemiBold
+                        ),
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    Text(
+                        text = "학습 결과를 쌓아 등급이 상승했을 때 나타나는 특별한 축하 연출을 미리 감상할 수 있습니다.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                    )
+
+                    Button(
+                        onClick = {
+                            showLevelUpPreview = true
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                            contentColor = PrimaryBlue
+                        )
+                    ) {
+                        Text(
+                            text = "등급 승급 연출 미리보기",
+                            style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold)
+                        )
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
             // ── 안내 카드 ────────────────────────────────────────────
             SquircleCard {
                 Row(
@@ -501,4 +618,170 @@ fun SettingsScreen(
             Spacer(modifier = Modifier.height(16.dp))
         }
     }
+
+    if (showLevelUpPreview) {
+        val infiniteTransition = rememberInfiniteTransition(label = "levelup_preview_anim")
+        val rotationAngle by infiniteTransition.animateFloat(
+            initialValue = 0f,
+            targetValue = 360f,
+            animationSpec = infiniteRepeatable(
+                animation = tween(8000, easing = LinearEasing),
+                repeatMode = RepeatMode.Restart
+            ),
+            label = "rotation"
+        )
+        val pulseScale by infiniteTransition.animateFloat(
+            initialValue = 0.95f,
+            targetValue = 1.05f,
+            animationSpec = infiniteRepeatable(
+                animation = tween(1000, easing = FastOutSlowInEasing),
+                repeatMode = RepeatMode.Reverse
+            ),
+            label = "pulse"
+        )
+
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.8f))
+                .clickable(enabled = false) {}, // block touches
+            contentAlignment = Alignment.Center
+        ) {
+            // Rotating sunburst background behind card
+            Canvas(
+                modifier = Modifier
+                    .size(360.dp)
+                    .graphicsLayer { rotationZ = rotationAngle }
+            ) {
+                val centerOffset = Offset(size.width / 2, size.height / 2)
+                val rayCount = 12
+                val angleDelta = 360f / rayCount
+                val rayLength = size.width * 0.5f
+                for (i in 0 until rayCount) {
+                    val angle = Math.toRadians((i * angleDelta).toDouble())
+                    val endX = centerOffset.x + Math.cos(angle).toFloat() * rayLength
+                    val endY = centerOffset.y + Math.sin(angle).toFloat() * rayLength
+                    val path = Path().apply {
+                        moveTo(centerOffset.x, centerOffset.y)
+                        val sideAngle1 = Math.toRadians((i * angleDelta - 10f).toDouble())
+                        val sideAngle2 = Math.toRadians((i * angleDelta + 10f).toDouble())
+                        lineTo(
+                            centerOffset.x + Math.cos(sideAngle1).toFloat() * rayLength,
+                            centerOffset.y + Math.sin(sideAngle1).toFloat() * rayLength
+                        )
+                        lineTo(
+                            centerOffset.x + Math.cos(sideAngle2).toFloat() * rayLength,
+                            centerOffset.y + Math.sin(sideAngle2).toFloat() * rayLength
+                        )
+                        close()
+                    }
+                    drawPath(
+                        path = path,
+                        color = Color(0xFFFFD700).copy(alpha = 0.15f)
+                    )
+                }
+            }
+
+            // Congratulations card
+            Card(
+                shape = RoundedCornerShape(28.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                elevation = CardDefaults.cardElevation(defaultElevation = 16.dp),
+                modifier = Modifier
+                    .padding(32.dp)
+                    .fillMaxWidth()
+            ) {
+                Column(
+                    modifier = Modifier.padding(24.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    // Trophy icon pulsing
+                    Box(
+                        modifier = Modifier
+                            .size(100.dp)
+                            .graphicsLayer {
+                                scaleX = pulseScale
+                                scaleY = pulseScale
+                            }
+                            .background(WarningOrange.copy(alpha = 0.12f), CircleShape),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.EmojiEvents,
+                            contentDescription = null,
+                            tint = Color(0xFFFFD700),
+                            modifier = Modifier.size(56.dp)
+                        )
+                    }
+
+                    Text(
+                        text = "등급 승급 완료! 🎉",
+                        style = MaterialTheme.typography.headlineMedium.copy(
+                            fontWeight = FontWeight.ExtraBold,
+                            fontSize = 24.sp
+                        ),
+                        color = WarningOrange,
+                        textAlign = TextAlign.Center
+                    )
+
+                    Text(
+                        text = "사용자님의 독해 수준이 상승했습니다.\n새로운 경지에 오르신 것을 축하합니다!",
+                        style = MaterialTheme.typography.bodyMedium.copy(
+                            fontSize = 14.sp,
+                            lineHeight = 22.sp
+                        ),
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
+                        textAlign = TextAlign.Center
+                    )
+
+                    // Tier upgrade visualizer
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterHorizontally),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f), RoundedCornerShape(12.dp))
+                            .padding(14.dp)
+                    ) {
+                        Text(
+                            text = "논리 전문가",
+                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                        )
+                        Icon(
+                            imageVector = Icons.Default.ArrowForward,
+                            contentDescription = null,
+                            tint = PrimaryBlue,
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Text(
+                            text = "논리 마스터",
+                            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.ExtraBold),
+                            color = PrimaryBlue
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(4.dp))
+
+                    Button(
+                        onClick = { showLevelUpPreview = false },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(48.dp),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = PrimaryBlue)
+                    ) {
+                        Text(
+                            text = "멋져요!",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 15.sp,
+                            color = Color.White
+                        )
+                    }
+            }
+        }
+    }
+}
+}
 }

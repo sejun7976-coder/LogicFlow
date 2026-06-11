@@ -77,4 +77,13 @@ class SettingsViewModel(
     fun resetTestState() {
         _apiTestState.value = ApiTestState.Idle
     }
+
+    fun resetTutorial() {
+        val sharedPrefs = context.getSharedPreferences("logicflow_prefs", Context.MODE_PRIVATE)
+        sharedPrefs.edit()
+            .putBoolean("tutorial_completed", false)
+            .putBoolean("tutorial_reading_completed", false)
+            .putBoolean("tutorial_stats_completed", false)
+            .apply()
+    }
 }

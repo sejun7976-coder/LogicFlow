@@ -480,8 +480,8 @@ class LogicFlowRepository(
                       "inferenceDetail": "추론 과정 검증 상세 피드백 (올바르면 '단계별 추론이 논리적 비약 없이 일관되게 유지됩니다.' 등)",
                       "exceptionCheck": 예외 사례 검증 여부 (true/false, 극단적이거나 모순되는 상황이 발견되면 false),
                       "exceptionDetail": "예외 사례 검증 상세 피드백 (예: '극단적인 상황에서 약간의 모순이 발견되었습니다.')",
-                      "aiFeedback": "전반적인 개선점과 논리적 피드백에 대한 종합 의견",
-                      "correctedText": "사용자 요약문의 맞춤법 및 논리적 흐름을 개선한 교정본 문장",
+                      "aiFeedback": "전반적인 개선점과 논리적 피드백에 대한 종합 의견 (친절하고 전문적인 AI 튜터 말투로 격려와 명확한 조언을 작성해주세요. 예: '작성해주신 요약문은 핵심 내용을 잘 담고 있습니다. 다만, 인과관계를 조금 더 명확하게 서술한다면 더 훌륭한 요약이 될 것입니다.')",
+                      "correctedText": "사용자 요약문의 맞춤법 및 논리적 흐름을 개선한 교정본 문장 (자연스럽고 부드러운 튜터 어조의 문장 형태로 작성해주세요. 예: '이렇게 다듬어서 서술해 보시는 것을 추천합니다.')",
                       "aiSummary": "지문의 핵심을 잘 살린 모범 요약문 (1-2문장)",
                       "passageType": "지문이 시, 소설, 수필, 희곡 등 문학 작품이면 '문학', 그 외 설명문, 논설문, 학술 등 비문학이면 '비문학' 중 하나"
                     }
@@ -512,7 +512,11 @@ class LogicFlowRepository(
                     passageTitle = passage.title,
                     userSummary = userSummary,
                     score = evalResult.score,
-                    grade = evalResult.grade,
+                    grade = when {
+                        evalResult.score >= 85 -> "높은 신뢰도 등급"
+                        evalResult.score >= 70 -> "보통 신뢰도 등급"
+                        else -> "낮은 신뢰도 등급"
+                    },
                     semanticMatch = evalResult.semanticMatch,
                     contextPreservation = evalResult.contextPreservation,
                     premiseCheck = evalResult.premiseCheck,
@@ -576,12 +580,13 @@ class LogicFlowRepository(
 
             val botResponseContent: String = if (apiKey.isBlank()) {
                 // Mock response
-                "지문 '${passage.title}'의 내용을 참고할 때, 제시해주신 의문 '${messageText}'은 핵심 구조 파악에 큰 도움이 됩니다. 다만 데모 모드이므로 구체적인 맞춤형 피드백을 드리기에 제한이 있습니다."
+                "지문 '${passage.title}'에 대한 질문 '${messageText}'을 분석해 보았습니다. 현재 데모 모드로 동작 중이므로 상세한 답변을 제공해 드리기는 어렵지만, 작성하신 요약문의 논리 구조를 다시 한번 점검해 보시는 것을 추천해 드립니다. 화이팅입니다!"
             } else {
                 try {
                     // Prepare contents for Gemini request
                     val systemContext = """
-                        당신은 사용자의 논리 독해 공부를 돕는 AI 챗봇 튜터입니다.
+                        당신은 사용자의 논리 독해 공부를 돕는 친절하고 전문적인 AI 챗봇 튜터입니다.
+                        사용자가 작성한 요약과 지문의 맥락을 분석하여 피드백과 질문에 대해 명확하고 논리적으로 이해하기 쉽게 설명해 주세요. 항상 따뜻하게 격려하는 말투를 사용해 주세요.
                         
                         [독해 지문]
                         ${passage.title}
@@ -593,13 +598,13 @@ class LogicFlowRepository(
                         [AI 평가 피드백]
                         ${result.aiFeedback}
                         
-                        위 정보를 바탕으로, 사용자가 질문하는 것에 대해 친절하고 정확하게 논리적으로 설명해주세요. 지문 내용과 사용자가 작성한 요약의 맥락에서 벗어나지 마세요.
+                        위 정보를 바탕으로, 사용자가 질문하는 것에 대해 친절하고 명확하며 논리적으로 설명해 주세요.
                     """.trimIndent()
 
                     val geminiContents = mutableListOf<Content>()
                     
                     geminiContents.add(Content(role = "user", parts = listOf(Part(systemContext))))
-                    geminiContents.add(Content(role = "model", parts = listOf(Part("네, 해당 지문과 피드백 내용을 토대로 도움을 드리겠습니다. 무엇이 궁금하신가요?"))))
+                    geminiContents.add(Content(role = "model", parts = listOf(Part("안녕하세요! 요약 결과에 대해 어떤 점이 궁금하신가요? 질문을 남겨주시면 친절히 알려드릴게요."))))
 
                     // Map updatedHistory to Gemini format
                     updatedHistory.forEach { msg ->
@@ -662,14 +667,14 @@ class LogicFlowRepository(
             premiseDetail = if (score >= 75) "모든 기본 전제가 표준 논리 구조와 일치합니다." else "요약문 일부 전제에 오류나 오해가 있습니다.",
             inferenceCheck = score >= 70,
             inferenceDetail = if (score >= 70) "단계별 추론이 논리적 비약 없이 일관되게 유지됩니다." else "일부 추론 과정에서 비약이 관찰되었습니다.",
-            exceptionCheck = score < 85,
+            exceptionCheck = score >= 85,
             exceptionDetail = if (score >= 85) "예외 상황이나 극단적 논리 모순이 발견되지 않았습니다." else "특정 극단적 상황에서 모순이 발견되었습니다.",
-            aiFeedback = "[데모 모드] 사용자의 요약은 지문의 중심 논점을 적절히 포함하고 있습니다. 다만, ${if (score < 80) "핵심 용어의 인과 관계 설명이 다소 미흡하여" else "논리적 흐름의 매끄러움이 보완된다면"} 더욱 우수한 요약문이 될 것입니다.",
-            correctedText = if (userSummary.length > 10) userSummary + " (교정본: 더욱 자연스러운 문체와 정합성 높은 논리로 다듬어진 상태입니다.)" else "지문의 핵심 개념인 ${passage.title}의 관계를 강화하여 서술하는 것이 좋습니다.",
+            aiFeedback = "작성해주신 요약문은 지문의 핵심 구조를 잘 파악하고 있습니다. 다만 ${if (score < 80) "문맥 간의 유기적인 연관성을 조금 더 보완하면 훨씬 명확한 요약문이 될 것입니다." else "흐름이 매끄럽고 전반적인 완성도가 아주 훌륭합니다."}",
+            correctedText = if (userSummary.length > 10) userSummary + " (추천 보완: 작성하신 문장을 보다 간결하고 가독성 높게 수정해 보세요.)" else "지문의 핵심 키워드인 '${passage.title}'에 중점을 두어 구체적으로 서술해 보세요.",
             aiSummary = passage.modelSummary,
             chatHistoryJson = gson.toJson(
                 listOf(
-                    ChatMessage("model", "안녕하세요! 작성하신 요약에 대한 분석 결과입니다. 피드백 내용 중 더 궁금하신 점이 있다면 질문해주세요. (현재 데모 모드로 동작 중입니다.)")
+                    ChatMessage("model", "안녕하세요! 지문 '${passage.title}' 요약에 대한 분석 결과입니다. 피드백이나 요약 내용에 대해 궁금한 점이 있으시다면 언제든 질문해 주세요!")
                 )
             ),
             timestamp = System.currentTimeMillis(),

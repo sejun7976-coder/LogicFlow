@@ -48,6 +48,8 @@ class HomeViewModel(
     private val context: Context
 ) : ViewModel() {
 
+    private val sharedPrefs = context.getSharedPreferences("logicflow_prefs", Context.MODE_PRIVATE)
+
     val allResults: StateFlow<List<AnalysisResultEntity>> = repository.getAllAnalysisResults()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
@@ -58,6 +60,43 @@ class HomeViewModel(
     val weeklyProgress: StateFlow<List<WeeklyDayProgress>> = allResults.map { results ->
         calculateWeeklyProgress(results)
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), defaultWeeklyProgress())
+
+    val hasStudiedToday: StateFlow<Boolean> = allResults.map { results ->
+        val calendar = Calendar.getInstance().apply {
+            set(Calendar.HOUR_OF_DAY, 0)
+            set(Calendar.MINUTE, 0)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }
+        val startOfToday = calendar.timeInMillis
+        results.any { it.timestamp >= startOfToday }
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), false)
+
+    private val _showTutorial = MutableStateFlow(false)
+    val showTutorial: StateFlow<Boolean> = _showTutorial
+
+    private val _currentTutorialStep = MutableStateFlow(0)
+    val currentTutorialStep: StateFlow<Int> = _currentTutorialStep
+
+    init {
+        val completed = sharedPrefs.getBoolean("tutorial_completed", false)
+        _showTutorial.value = !completed
+    }
+
+    fun completeTutorial() {
+        sharedPrefs.edit().putBoolean("tutorial_completed", true).apply()
+        _showTutorial.value = false
+    }
+
+    fun resetTutorial() {
+        sharedPrefs.edit().putBoolean("tutorial_completed", false).apply()
+        _currentTutorialStep.value = 0
+        _showTutorial.value = true
+    }
+
+    fun setTutorialStep(step: Int) {
+        _currentTutorialStep.value = step
+    }
 
     // 앱 실행마다 랜덤으로 명언 하나 뽑기
     val todayProverb: Proverb = loadRandomProverb()

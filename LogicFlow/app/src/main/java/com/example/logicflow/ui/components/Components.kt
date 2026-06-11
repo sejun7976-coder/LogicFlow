@@ -25,6 +25,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.material.icons.filled.HelpOutline
 import com.example.logicflow.ui.theme.BorderLight
 import com.example.logicflow.ui.theme.PrimaryBlue
 
@@ -33,7 +34,8 @@ fun LogicFlowTopAppBar(
     title: String,
     onMenuClick: () -> Unit,
     onNotificationClick: () -> Unit = {},
-    showMenu: Boolean = true
+    showMenu: Boolean = true,
+    onHelpClick: (() -> Unit)? = null
 ) {
     Surface(
         modifier = Modifier
@@ -72,15 +74,26 @@ fun LogicFlowTopAppBar(
                 color = MaterialTheme.colorScheme.onBackground
             )
 
-            IconButton(
-                onClick = onNotificationClick,
-                modifier = Modifier.align(Alignment.CenterEnd)
+            Row(
+                modifier = Modifier.align(Alignment.CenterEnd),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(
-                    imageVector = Icons.Default.Notifications,
-                    contentDescription = "알림",
-                    tint = PrimaryBlue
-                )
+                if (onHelpClick != null) {
+                    IconButton(onClick = onHelpClick) {
+                        Icon(
+                            imageVector = Icons.Default.HelpOutline,
+                            contentDescription = "도움말",
+                            tint = PrimaryBlue
+                        )
+                    }
+                }
+                IconButton(onClick = onNotificationClick) {
+                    Icon(
+                        imageVector = Icons.Default.Notifications,
+                        contentDescription = "알림",
+                        tint = PrimaryBlue
+                    )
+                }
             }
         }
     }
@@ -175,12 +188,13 @@ fun SquircleCard(
     onClick: (() -> Unit)? = null,
     borderWidth: Dp = 0.dp,
     borderColor: Color = Color.Transparent,
+    containerColor: Color = MaterialTheme.colorScheme.surface,
     content: @Composable ColumnScope.() -> Unit
 ) {
     Card(
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
+            containerColor = containerColor
         ),
         elevation = CardDefaults.cardElevation(
             defaultElevation = 2.dp

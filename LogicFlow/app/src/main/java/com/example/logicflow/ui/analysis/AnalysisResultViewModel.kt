@@ -3,6 +3,7 @@ package com.example.logicflow.ui.analysis
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.logicflow.data.local.AnalysisResultEntity
+import com.example.logicflow.data.local.PassageEntity
 import com.example.logicflow.data.repository.ChatMessage
 import com.example.logicflow.data.repository.LogicFlowRepository
 import com.google.gson.Gson
@@ -21,6 +22,9 @@ class AnalysisResultViewModel(
     private val _currentResult = MutableStateFlow<AnalysisResultEntity?>(null)
     val currentResult: StateFlow<AnalysisResultEntity?> = _currentResult
 
+    private val _currentPassage = MutableStateFlow<PassageEntity?>(null)
+    val currentPassage: StateFlow<PassageEntity?> = _currentPassage
+
     private val _chatHistory = MutableStateFlow<List<ChatMessage>>(emptyList())
     val chatHistory: StateFlow<List<ChatMessage>> = _chatHistory
 
@@ -38,6 +42,10 @@ class AnalysisResultViewModel(
             repository.getAnalysisResultById(resultId).collectLatest { result ->
                 _currentResult.value = result
                 if (result != null) {
+                    // Load corresponding passage details
+                    val passage = repository.getPassageById(result.passageId)
+                    _currentPassage.value = passage
+
                     val type = object : TypeToken<List<ChatMessage>>() {}.type
                     val history: List<ChatMessage> = try {
                         gson.fromJson(result.chatHistoryJson, type) ?: emptyList()
@@ -48,7 +56,7 @@ class AnalysisResultViewModel(
                         listOf(
                             ChatMessage(
                                 role = "model",
-                                content = "안녕하세요! '${result.passageTitle}' 지문 요약에 대한 채점 결과가 완료되었습니다. 점수나 피드백에 대해 궁금한 점이 있으시다면 언제든 질문해 주세요!"
+                                content = "안녕하세요! '${result.passageTitle}' 지문 요약 분석 결과에 대해 어떤 점이 궁금하신가요? 질문을 남겨주시면 자세히 설명해 드릴게요."
                             )
                         )
                     }

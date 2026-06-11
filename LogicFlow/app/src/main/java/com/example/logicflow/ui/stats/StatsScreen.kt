@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BarChart
@@ -43,6 +44,37 @@ import com.example.logicflow.ui.theme.WarningOrange
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.boundsInRoot
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.RoundRect
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.PathFillType
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalContext
+import android.content.Context
+import androidx.compose.material.icons.filled.HelpOutline
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.key
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.material.icons.filled.School
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.ui.text.font.FontStyle
 
 @Composable
 fun StatsScreen(
@@ -57,6 +89,51 @@ fun StatsScreen(
     val stats by viewModel.statsData.collectAsState()
     val savedNotes by historyViewModel.filteredResults.collectAsState()
     val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
+
+    val context = LocalContext.current
+    val sharedPrefs = remember { context.getSharedPreferences("logicflow_prefs", Context.MODE_PRIVATE) }
+    var showTutorial by remember { mutableStateOf(!sharedPrefs.getBoolean("tutorial_stats_completed", false)) }
+    var currentTutorialStep by remember { mutableStateOf(0) }
+
+    val scrollState = rememberScrollState()
+    var columnBounds by remember { mutableStateOf<Rect?>(null) }
+
+    var parentHeight by remember { mutableStateOf(0) }
+    var tutorialParentHeight by remember { mutableStateOf(0) }
+    var circularGaugeBounds by remember { mutableStateOf<Rect?>(null) }
+    var summaryRowBounds by remember { mutableStateOf<Rect?>(null) }
+    var chartBounds by remember { mutableStateOf<Rect?>(null) }
+    var notesBounds by remember { mutableStateOf<Rect?>(null) }
+
+    // Scroll automatically to bring the highlighted element into view
+    LaunchedEffect(currentTutorialStep, showTutorial) {
+        if (showTutorial) {
+            kotlinx.coroutines.delay(150)
+            val targetBounds = when (currentTutorialStep) {
+                1 -> circularGaugeBounds
+                2 -> summaryRowBounds
+                3 -> chartBounds
+                4 -> notesBounds
+                else -> null
+            }
+            val colBounds = columnBounds
+            if (targetBounds != null && colBounds != null) {
+                val relativeTop = targetBounds.top - colBounds.top
+                val elementHeight = targetBounds.height
+                val viewportHeight = colBounds.height
+                val absoluteTop = scrollState.value + relativeTop
+                val targetScroll = (absoluteTop - (viewportHeight - elementHeight) / 2f).toInt()
+                    .coerceIn(0, scrollState.maxValue)
+                scrollState.animateScrollTo(targetScroll)
+            } else if (currentTutorialStep == 0) {
+                scrollState.animateScrollTo(0)
+            }
+        }
+    }
+
+    var showLevelUpEffect by remember { mutableStateOf(false) }
+    var levelUpTierName by remember { mutableStateOf("") }
+    var levelUpTierNumber by remember { mutableStateOf(1) }
 
     var showGradeDialog by remember { mutableStateOf(false) }
 
@@ -85,6 +162,23 @@ fun StatsScreen(
         else -> "등급 없음"
     }
 
+    LaunchedEffect(currentTier) {
+        if (currentTier > 0) {
+            val hasKey = sharedPrefs.contains("last_saved_tier")
+            val lastSavedTier = sharedPrefs.getInt("last_saved_tier", 0)
+            if (hasKey && currentTier > lastSavedTier) {
+                levelUpTierNumber = currentTier
+                levelUpTierName = currentGradeName
+                showLevelUpEffect = true
+                sharedPrefs.edit().putInt("last_saved_tier", currentTier).apply()
+            } else if (!hasKey) {
+                sharedPrefs.edit().putInt("last_saved_tier", currentTier).apply()
+            } else if (currentTier < lastSavedTier) {
+                sharedPrefs.edit().putInt("last_saved_tier", currentTier).apply()
+            }
+        }
+    }
+
     val gradeTiers = listOf(
         GradeTier(1, "논리 입문자", 1, 0, "1편 이상"),
         GradeTier(2, "논리 수습생", 3, 65, "3편 이상 & 평균 65점 이상"),
@@ -100,7 +194,12 @@ fun StatsScreen(
             LogicFlowTopAppBar(
                 title = "학습 통계",
                 onMenuClick = onMenuClick,
-                onNotificationClick = onNotificationClick
+                onNotificationClick = onNotificationClick,
+                onHelpClick = {
+                    sharedPrefs.edit().putBoolean("tutorial_stats_completed", false).apply()
+                    currentTutorialStep = 0
+                    showTutorial = true
+                }
             )
         },
         bottomBar = {
@@ -117,13 +216,21 @@ fun StatsScreen(
                 .background(MaterialTheme.colorScheme.background)
                 .padding(padding)
                 .padding(horizontal = 16.dp)
-                .verticalScroll(rememberScrollState()),
+                .verticalScroll(scrollState)
+                .onGloballyPositioned { coords ->
+                    parentHeight = coords.size.height
+                    columnBounds = coords.boundsInRoot()
+                },
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Spacer(modifier = Modifier.height(4.dp))
 
             // Average score circular gauge card
-            SquircleCard {
+            SquircleCard(
+                modifier = Modifier.onGloballyPositioned { coords ->
+                    circularGaugeBounds = coords.boundsInRoot()
+                }
+            ) {
                 Text(
                     text = "평균 독해 성취도",
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
@@ -189,7 +296,10 @@ fun StatsScreen(
 
             // Summary stats cards (Total passages completed)
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth()
+                    .onGloballyPositioned { coords ->
+                        summaryRowBounds = coords.boundsInRoot()
+                    },
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 SquircleCard(modifier = Modifier.weight(1f)) {
@@ -227,7 +337,11 @@ fun StatsScreen(
 
 
             // Literature vs Non-Literature breakdown card
-            SquircleCard {
+            SquircleCard(
+                modifier = Modifier.onGloballyPositioned { coords ->
+                    chartBounds = coords.boundsInRoot()
+                }
+            ) {
                 Text(
                     text = "문학 vs 비문학 학습 현황",
                     style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
@@ -322,6 +436,9 @@ fun StatsScreen(
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth()
+                    .onGloballyPositioned { coords ->
+                        notesBounds = coords.boundsInRoot()
+                    }
             ) {
                 Icon(
                     imageVector = Icons.Default.MenuBook,
@@ -365,95 +482,120 @@ fun StatsScreen(
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     savedNotes.forEach { result ->
-                        SquircleCard(
-                            onClick = { onResultSelected(result.id) }
-                        ) {
-                            Column(modifier = Modifier.fillMaxWidth()) {
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Text(
-                                        text = result.passageTitle,
-                                        style = MaterialTheme.typography.titleLarge.copy(
-                                            fontWeight = FontWeight.Bold,
-                                            fontSize = 18.sp
-                                        ),
-                                        color = MaterialTheme.colorScheme.onSurface,
-                                        modifier = Modifier.weight(1f),
-                                        maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis
-                                    )
-                                    IconButton(
-                                        onClick = { historyViewModel.deleteResult(result.id) },
-                                        modifier = Modifier.size(24.dp)
+                        key(result.id) {
+                            val currentResult = rememberUpdatedState(result)
+                            val dismissState = rememberSwipeToDismissBoxState(
+                                confirmValueChange = { value ->
+                                    if (value == SwipeToDismissBoxValue.EndToStart) {
+                                        historyViewModel.deleteResult(currentResult.value.id)
+                                        true
+                                    } else {
+                                        false
+                                    }
+                                }
+                            )
+
+                            SwipeToDismissBox(
+                                state = dismissState,
+                                backgroundContent = {
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .clip(RoundedCornerShape(20.dp))
+                                            .background(MaterialTheme.colorScheme.errorContainer)
+                                            .padding(horizontal = 20.dp),
+                                        contentAlignment = Alignment.CenterEnd
                                     ) {
                                         Icon(
                                             imageVector = Icons.Default.Delete,
                                             contentDescription = "삭제",
-                                            tint = MaterialTheme.colorScheme.error.copy(alpha = 0.8f),
-                                            modifier = Modifier.size(20.dp)
+                                            tint = MaterialTheme.colorScheme.onErrorContainer
                                         )
                                     }
-                                }
-
-                                Spacer(modifier = Modifier.height(8.dp))
-
-                                Text(
-                                    text = result.userSummary,
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
-                                    maxLines = 2,
-                                    overflow = TextOverflow.Ellipsis
-                                )
-
-                                Spacer(modifier = Modifier.height(16.dp))
-
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    verticalAlignment = Alignment.CenterVertically
+                                },
+                                enableDismissFromStartToEnd = false,
+                                enableDismissFromEndToStart = true
+                            ) {
+                                SquircleCard(
+                                    onClick = { onResultSelected(result.id) }
                                 ) {
-                                    Row(verticalAlignment = Alignment.CenterVertically) {
-                                        Box(
-                                            modifier = Modifier
-                                                .clip(RoundedCornerShape(8.dp))
-                                                .background(
-                                                    when {
-                                                        result.score >= 85 -> SuccessEmerald.copy(alpha = 0.1f)
-                                                        result.score >= 70 -> WarningOrange.copy(alpha = 0.1f)
-                                                        else -> MaterialTheme.colorScheme.error.copy(alpha = 0.1f)
-                                                    }
-                                                )
-                                                .padding(horizontal = 8.dp, vertical = 4.dp)
+                                    Column(modifier = Modifier.fillMaxWidth()) {
+                                        Row(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            horizontalArrangement = Arrangement.SpaceBetween,
+                                            verticalAlignment = Alignment.CenterVertically
                                         ) {
                                             Text(
-                                                text = "${result.score}점",
-                                                style = MaterialTheme.typography.labelSmall.copy(
-                                                    fontWeight = FontWeight.Bold
+                                                text = result.passageTitle,
+                                                style = MaterialTheme.typography.titleLarge.copy(
+                                                    fontWeight = FontWeight.Bold,
+                                                    fontSize = 18.sp
                                                 ),
-                                                color = when {
-                                                    result.score >= 85 -> SuccessEmerald
-                                                    result.score >= 70 -> WarningOrange
-                                                    else -> MaterialTheme.colorScheme.error
-                                                }
+                                                color = MaterialTheme.colorScheme.onSurface,
+                                                modifier = Modifier.weight(1f),
+                                                maxLines = 1,
+                                                overflow = TextOverflow.Ellipsis
                                             )
                                         }
-                                        Spacer(modifier = Modifier.width(8.dp))
+
+                                        Spacer(modifier = Modifier.height(8.dp))
+
                                         Text(
-                                            text = result.grade,
-                                            style = MaterialTheme.typography.labelSmall.copy(
-                                                fontWeight = FontWeight.Medium
-                                            ),
-                                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                                            text = result.userSummary,
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                                            maxLines = 2,
+                                            overflow = TextOverflow.Ellipsis
                                         )
+
+                                        Spacer(modifier = Modifier.height(16.dp))
+
+                                        Row(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            horizontalArrangement = Arrangement.SpaceBetween,
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                                Box(
+                                                    modifier = Modifier
+                                                        .clip(RoundedCornerShape(8.dp))
+                                                        .background(
+                                                            when {
+                                                                result.score >= 85 -> SuccessEmerald.copy(alpha = 0.1f)
+                                                                result.score >= 70 -> WarningOrange.copy(alpha = 0.1f)
+                                                                else -> MaterialTheme.colorScheme.error.copy(alpha = 0.1f)
+                                                            }
+                                                        )
+                                                        .padding(horizontal = 8.dp, vertical = 4.dp)
+                                                ) {
+                                                    Text(
+                                                        text = "${result.score}점",
+                                                        style = MaterialTheme.typography.labelSmall.copy(
+                                                            fontWeight = FontWeight.Bold
+                                                        ),
+                                                        color = when {
+                                                            result.score >= 85 -> SuccessEmerald
+                                                            result.score >= 70 -> WarningOrange
+                                                            else -> MaterialTheme.colorScheme.error
+                                                        }
+                                                    )
+                                                }
+                                                Spacer(modifier = Modifier.width(8.dp))
+                                                Text(
+                                                    text = result.grade,
+                                                    style = MaterialTheme.typography.labelSmall.copy(
+                                                        fontWeight = FontWeight.Medium
+                                                    ),
+                                                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                                                )
+                                            }
+                                            Text(
+                                                text = dateFormat.format(Date(result.timestamp)),
+                                                style = MaterialTheme.typography.labelSmall.copy(fontSize = 11.sp),
+                                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
+                                            )
+                                        }
                                     }
-                                    Text(
-                                        text = dateFormat.format(Date(result.timestamp)),
-                                        style = MaterialTheme.typography.labelSmall.copy(fontSize = 11.sp),
-                                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
-                                    )
                                 }
                             }
                         }
@@ -461,7 +603,506 @@ fun StatsScreen(
                 }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
+            if (showTutorial) {
+                Spacer(modifier = Modifier.height(400.dp))
+            } else {
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+        }
+    }
+
+
+
+    if (showLevelUpEffect) {
+        val infiniteTransition = rememberInfiniteTransition(label = "levelup_anim")
+        val rotationAngle by infiniteTransition.animateFloat(
+            initialValue = 0f,
+            targetValue = 360f,
+            animationSpec = infiniteRepeatable(
+                animation = tween(8000, easing = LinearEasing),
+                repeatMode = RepeatMode.Restart
+            ),
+            label = "rotation"
+        )
+        val pulseScale by infiniteTransition.animateFloat(
+            initialValue = 0.95f,
+            targetValue = 1.05f,
+            animationSpec = infiniteRepeatable(
+                animation = tween(1000, easing = FastOutSlowInEasing),
+                repeatMode = RepeatMode.Reverse
+            ),
+            label = "pulse"
+        )
+
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.8f))
+                .clickable(enabled = false) {}, // block touches
+            contentAlignment = Alignment.Center
+        ) {
+            // Rotating sunburst background behind card
+            Canvas(
+                modifier = Modifier
+                    .size(360.dp)
+                    .graphicsLayer { rotationZ = rotationAngle }
+            ) {
+                val centerOffset = Offset(size.width / 2, size.height / 2)
+                val rayCount = 12
+                val angleDelta = 360f / rayCount
+                val rayLength = size.width * 0.5f
+                for (i in 0 until rayCount) {
+                    val angle = Math.toRadians((i * angleDelta).toDouble())
+                    val endX = centerOffset.x + Math.cos(angle).toFloat() * rayLength
+                    val endY = centerOffset.y + Math.sin(angle).toFloat() * rayLength
+                    val path = Path().apply {
+                        moveTo(centerOffset.x, centerOffset.y)
+                        val sideAngle1 = Math.toRadians((i * angleDelta - 10f).toDouble())
+                        val sideAngle2 = Math.toRadians((i * angleDelta + 10f).toDouble())
+                        lineTo(
+                            centerOffset.x + Math.cos(sideAngle1).toFloat() * rayLength,
+                            centerOffset.y + Math.sin(sideAngle1).toFloat() * rayLength
+                        )
+                        lineTo(
+                            centerOffset.x + Math.cos(sideAngle2).toFloat() * rayLength,
+                            centerOffset.y + Math.sin(sideAngle2).toFloat() * rayLength
+                        )
+                        close()
+                    }
+                    drawPath(
+                        path = path,
+                        color = Color(0xFFFFD700).copy(alpha = 0.15f)
+                    )
+                }
+            }
+
+            // Congratulations card
+            Card(
+                shape = RoundedCornerShape(28.dp),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                elevation = CardDefaults.cardElevation(defaultElevation = 16.dp),
+                modifier = Modifier
+                    .padding(32.dp)
+                    .fillMaxWidth()
+            ) {
+                Column(
+                    modifier = Modifier.padding(24.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    // Trophy icon pulsing
+                    Box(
+                        modifier = Modifier
+                            .size(100.dp)
+                            .graphicsLayer {
+                                scaleX = pulseScale
+                                scaleY = pulseScale
+                            }
+                            .background(WarningOrange.copy(alpha = 0.12f), CircleShape),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.EmojiEvents,
+                            contentDescription = null,
+                            tint = Color(0xFFFFD700),
+                            modifier = Modifier.size(56.dp)
+                        )
+                    }
+
+                    Text(
+                        text = "등급 승급 완료! 🎉",
+                        style = MaterialTheme.typography.headlineMedium.copy(
+                            fontWeight = FontWeight.ExtraBold,
+                            fontSize = 24.sp
+                        ),
+                        color = WarningOrange,
+                        textAlign = TextAlign.Center
+                    )
+
+                    Text(
+                        text = "사용자님의 독해 수준이 상승했습니다.\n새로운 경지에 오르신 것을 축하합니다!",
+                        style = MaterialTheme.typography.bodyMedium.copy(
+                            fontSize = 14.sp,
+                            lineHeight = 22.sp
+                        ),
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
+                        textAlign = TextAlign.Center
+                    )
+
+                    // Tier upgrade visualizer
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterHorizontally),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f), RoundedCornerShape(12.dp))
+                            .padding(14.dp)
+                    ) {
+                        val prevTierName = when (levelUpTierNumber - 1) {
+                            6 -> "논리 마스터"
+                            5 -> "논리 전문가"
+                            4 -> "논리 분석가"
+                            3 -> "논리 탐색가"
+                            2 -> "논리 수습생"
+                            1 -> "논리 입문자"
+                            else -> "등급 없음"
+                        }
+                        Text(
+                            text = prevTierName,
+                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                        )
+                        Icon(
+                            imageVector = Icons.Default.ArrowForward,
+                            contentDescription = null,
+                            tint = PrimaryBlue,
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Text(
+                            text = levelUpTierName,
+                            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.ExtraBold),
+                            color = PrimaryBlue
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(4.dp))
+
+                    Button(
+                        onClick = { showLevelUpEffect = false },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(48.dp),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = PrimaryBlue)
+                    ) {
+                        Text(
+                            text = "멋져요!",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 15.sp,
+                            color = Color.White
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    if (showTutorial) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .clickable(enabled = false) {}
+                .onGloballyPositioned { coords ->
+                    tutorialParentHeight = coords.size.height
+                }
+        ) {
+            Canvas(modifier = Modifier.fillMaxSize()) {
+                val canvasWidth = size.width
+                val canvasHeight = size.height
+
+                if (currentTutorialStep == 0) {
+                    drawRect(color = Color.Black.copy(alpha = 0.8f))
+                } else {
+                    val path = Path().apply {
+                        fillType = PathFillType.EvenOdd
+                        addRect(Rect(0f, 0f, canvasWidth, canvasHeight))
+
+                        when (currentTutorialStep) {
+                            1 -> {
+                                circularGaugeBounds?.let { bounds ->
+                                    addRoundRect(
+                                        RoundRect(
+                                            rect = Rect(
+                                                left = bounds.left - 4.dp.toPx(),
+                                                top = bounds.top - 4.dp.toPx(),
+                                                right = bounds.right + 4.dp.toPx(),
+                                                bottom = bounds.bottom + 4.dp.toPx()
+                                            ),
+                                            cornerRadius = CornerRadius(20.dp.toPx(), 20.dp.toPx())
+                                        )
+                                    )
+                                }
+                            }
+                            2 -> {
+                                summaryRowBounds?.let { bounds ->
+                                    addRoundRect(
+                                        RoundRect(
+                                            rect = Rect(
+                                                left = bounds.left - 4.dp.toPx(),
+                                                top = bounds.top - 4.dp.toPx(),
+                                                right = bounds.right + 4.dp.toPx(),
+                                                bottom = bounds.bottom + 4.dp.toPx()
+                                            ),
+                                            cornerRadius = CornerRadius(20.dp.toPx(), 20.dp.toPx())
+                                        )
+                                    )
+                                }
+                            }
+                            3 -> {
+                                chartBounds?.let { bounds ->
+                                    addRoundRect(
+                                        RoundRect(
+                                            rect = Rect(
+                                                left = bounds.left - 4.dp.toPx(),
+                                                top = bounds.top - 4.dp.toPx(),
+                                                right = bounds.right + 4.dp.toPx(),
+                                                bottom = bounds.bottom + 4.dp.toPx()
+                                            ),
+                                            cornerRadius = CornerRadius(20.dp.toPx(), 20.dp.toPx())
+                                        )
+                                    )
+                                }
+                            }
+                            4 -> {
+                                notesBounds?.let { bounds ->
+                                    addRoundRect(
+                                        RoundRect(
+                                            rect = Rect(
+                                                left = bounds.left - 4.dp.toPx(),
+                                                top = bounds.top - 4.dp.toPx(),
+                                                right = bounds.right + 4.dp.toPx(),
+                                                bottom = bounds.bottom + 4.dp.toPx()
+                                            ),
+                                            cornerRadius = CornerRadius(20.dp.toPx(), 20.dp.toPx())
+                                        )
+                                    )
+                                }
+                            }
+                        }
+                    }
+                    drawPath(path = path, color = Color.Black.copy(alpha = 0.8f))
+                }
+            }
+
+            // Skip button
+            TextButton(
+                onClick = {
+                    sharedPrefs.edit().putBoolean("tutorial_stats_completed", true).apply()
+                    showTutorial = false
+                },
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .statusBarsPadding()
+                    .padding(top = 8.dp, end = 16.dp)
+            ) {
+                Text(
+                    text = "건너뛰기",
+                    color = Color.White.copy(alpha = 0.8f),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 14.sp
+                )
+            }
+
+            // Step Content
+            when (currentTutorialStep) {
+                0 -> {
+                    Card(
+                        shape = RoundedCornerShape(24.dp),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .padding(24.dp)
+                            .fillMaxWidth()
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(24.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(16.dp)
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(72.dp)
+                                    .background(PrimaryBlue.copy(alpha = 0.1f), CircleShape),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.BarChart,
+                                    contentDescription = null,
+                                    tint = PrimaryBlue,
+                                    modifier = Modifier.size(36.dp)
+                                )
+                            }
+
+                            Text(
+                                text = "학습 통계 가이드",
+                                style = MaterialTheme.typography.titleLarge.copy(
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 20.sp
+                                ),
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+
+                            Text(
+                                text = "독해 요약 학습 현황과 지금까지 축적된 기록 분석을 확인하는 공간입니다. 핵심 지표들의 설명과 사용법을 안내해 드릴게요.",
+                                style = MaterialTheme.typography.bodyMedium.copy(
+                                    fontSize = 14.sp,
+                                    lineHeight = 22.sp
+                                ),
+                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
+                                textAlign = TextAlign.Center
+                            )
+
+                            Spacer(modifier = Modifier.height(4.dp))
+
+                            Button(
+                                onClick = { currentTutorialStep = 1 },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(48.dp),
+                                shape = RoundedCornerShape(12.dp),
+                                colors = ButtonDefaults.buttonColors(containerColor = PrimaryBlue)
+                            ) {
+                                Text(
+                                    text = "시작하기",
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 15.sp,
+                                    color = Color.White
+                                )
+                            }
+                        }
+                    }
+                }
+                1 -> {
+                    val density = LocalDensity.current
+                    val topOffset = remember(circularGaugeBounds) {
+                        if (circularGaugeBounds != null) {
+                            with(density) { circularGaugeBounds!!.bottom.toDp() }
+                        } else {
+                            260.dp
+                        }
+                    }
+                    Column(
+                        modifier = Modifier
+                            .align(Alignment.TopCenter)
+                            .padding(top = topOffset + 12.dp)
+                            .padding(horizontal = 20.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        Text(
+                            text = "↑ 평균 독해 성취도",
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 16.sp
+                        )
+
+                        TutorialGuideCard(
+                            title = "성취도 게이지 🎯",
+                            content = "지금까지 훈련한 결과들의 평균 점수를 보여줍니다. 점수대에 따라 우수, 보통, 노력 필요 등의 피드백을 한눈에 확인할 수 있습니다.",
+                            currentStep = 1,
+                            totalSteps = 4,
+                            onNext = { currentTutorialStep = 2 },
+                            onPrev = { currentTutorialStep = 0 }
+                        )
+                    }
+                }
+                2 -> {
+                    val density = LocalDensity.current
+                    val topOffset = remember(summaryRowBounds) {
+                        if (summaryRowBounds != null) {
+                            with(density) { summaryRowBounds!!.bottom.toDp() }
+                        } else {
+                            380.dp
+                        }
+                    }
+                    Column(
+                        modifier = Modifier
+                            .align(Alignment.TopCenter)
+                            .padding(top = topOffset + 12.dp)
+                            .padding(horizontal = 20.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        Text(
+                            text = "↑ 학습 요약 & 등급 칭호",
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 16.sp
+                        )
+
+                        TutorialGuideCard(
+                            title = "학습량 & 등급 🏆",
+                            content = "총 요약한 편수와 현재 내 등급을 보여줍니다. 등급 카드(우측)를 터치하면 각 등급별 달성 조건과 승급을 위한 다음 목표 요건을 팝업창에서 볼 수 있습니다.",
+                            currentStep = 2,
+                            totalSteps = 4,
+                            onNext = { currentTutorialStep = 3 },
+                            onPrev = { currentTutorialStep = 1 }
+                        )
+                    }
+                }
+                3 -> {
+                    val density = LocalDensity.current
+                    val topOffset = remember(chartBounds) {
+                        if (chartBounds != null) {
+                            with(density) { chartBounds!!.bottom.toDp() }
+                        } else {
+                            520.dp
+                        }
+                    }
+                    Column(
+                        modifier = Modifier
+                            .align(Alignment.TopCenter)
+                            .padding(top = topOffset + 12.dp)
+                            .padding(horizontal = 20.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        Text(
+                            text = "↑ 장르별 비율 차트",
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 16.sp
+                        )
+
+                        TutorialGuideCard(
+                            title = "문학 vs 비문학 비율 📊",
+                            content = "문학과 비문학 학습 비율을 Segmented Bar Chart로 모니터링할 수 있습니다. 한쪽 분야에 치우치지 않게 균형 있는 요약 독해 훈련을 지속해보세요.",
+                            currentStep = 3,
+                            totalSteps = 4,
+                            onNext = { currentTutorialStep = 4 },
+                            onPrev = { currentTutorialStep = 2 }
+                        )
+                    }
+                }
+                4 -> {
+                    val density = LocalDensity.current
+                    val bottomOffset = remember(tutorialParentHeight, notesBounds) {
+                        if (tutorialParentHeight > 0 && notesBounds != null) {
+                            with(density) { (tutorialParentHeight - notesBounds!!.top).toDp() }
+                        } else {
+                            180.dp
+                        }
+                    }
+                    Column(
+                        modifier = Modifier
+                            .align(Alignment.BottomCenter)
+                            .padding(bottom = bottomOffset + 12.dp)
+                            .padding(horizontal = 20.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        TutorialGuideCard(
+                            title = "저장된 노트 보관소 📓",
+                            content = "지금까지 제출하여 AI 첨삭을 받은 이력 리스트입니다. 카드를 눌러 상세 분석 보고서를 다시 읽을 수 있으며, 노트를 삭제하려면 왼쪽으로 부드럽게 스와이프(밀기)하시면 삭제됩니다.",
+                            currentStep = 4,
+                            totalSteps = 4,
+                            onNext = {
+                                sharedPrefs.edit().putBoolean("tutorial_stats_completed", true).apply()
+                                showTutorial = false
+                            },
+                            onPrev = { currentTutorialStep = 3 }
+                        )
+
+                        Text(
+                            text = "↓ 저장된 노트 목록",
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 16.sp
+                        )
+                    }
+                }
+            }
         }
     }
 
@@ -673,3 +1314,92 @@ data class GradeTier(
     val scoreReq: Int,
     val desc: String
 )
+
+@Composable
+private fun TutorialGuideCard(
+    title: String,
+    content: String,
+    currentStep: Int,
+    totalSteps: Int,
+    onNext: () -> Unit,
+    onPrev: () -> Unit
+) {
+    Card(
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Column(
+            modifier = Modifier.padding(20.dp),
+            verticalArrangement = Arrangement.spacedBy(14.dp)
+        ) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleMedium.copy(
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 17.sp
+                ),
+                color = PrimaryBlue
+            )
+
+            Text(
+                text = content,
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    fontSize = 14.sp,
+                    lineHeight = 22.sp
+                ),
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
+            )
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                // Step Indicator Dots
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    for (i in 1..totalSteps) {
+                        Box(
+                            modifier = Modifier
+                                .size(8.dp)
+                                .background(
+                                    color = if (i == currentStep) PrimaryBlue else MaterialTheme.colorScheme.surfaceVariant,
+                                    shape = CircleShape
+                                )
+                        )
+                    }
+                }
+
+                // Control Buttons
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    TextButton(onClick = onPrev) {
+                        Text(
+                            text = "이전",
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+
+                    Button(
+                        onClick = onNext,
+                        colors = ButtonDefaults.buttonColors(containerColor = PrimaryBlue),
+                        shape = RoundedCornerShape(8.dp),
+                        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
+                    ) {
+                        Text(
+                            text = if (currentStep == totalSteps) "완료" else "다음 ➔",
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
