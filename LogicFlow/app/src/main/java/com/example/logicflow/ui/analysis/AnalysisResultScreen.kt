@@ -586,7 +586,7 @@ fun AnalysisResultScreen(
                                     state = pagerState,
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .height(110.dp)
+                                        .height(145.dp)
                                 ) { page ->
                                     Column(
                                         modifier = Modifier
