@@ -934,7 +934,7 @@ fun StatsScreen(
                             )
 
                             Text(
-                                text = "독해 요약 학습 현황과 지금까지 축적된 기록 분석을 확인하는 공간입니다. 핵심 지표들의 설명과 사용법을 안내해 드릴게요.",
+                                text = "독해 요약 학습 현황과 지금까지 기록된 분석 결과를 확인하는 공간입니다. 중요한 정보들의 설명과 사용법을 안내해 드릴게요.",
                                 style = MaterialTheme.typography.bodyMedium.copy(
                                     fontSize = 14.sp,
                                     lineHeight = 22.sp
@@ -989,7 +989,7 @@ fun StatsScreen(
 
                         TutorialGuideCard(
                             title = "성취도 게이지 🎯",
-                            content = "지금까지 훈련한 결과들의 평균 점수를 보여줍니다. 점수대에 따라 우수, 보통, 노력 필요 등의 피드백을 한눈에 확인할 수 있습니다.",
+                            content = "지금까지 연습한 결과들의 평균 점수를 보여줍니다. 점수대에 따라 우수, 보통, 노력 필요 등 나의 실력을 한눈에 확인할 수 있습니다.",
                             currentStep = 1,
                             totalSteps = 4,
                             onNext = { currentTutorialStep = 2 },
@@ -1015,7 +1015,7 @@ fun StatsScreen(
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         Text(
-                            text = "↑ 학습 요약 & 등급 칭호",
+                            text = "↑ 학습 횟수 & 등급",
                             color = Color.White,
                             fontWeight = FontWeight.Bold,
                             fontSize = 16.sp
@@ -1023,7 +1023,7 @@ fun StatsScreen(
 
                         TutorialGuideCard(
                             title = "학습량 & 등급 🏆",
-                            content = "총 요약한 편수와 현재 내 등급을 보여줍니다. 등급 카드(우측)를 터치하면 각 등급별 달성 조건과 승급을 위한 다음 목표 요건을 팝업창에서 볼 수 있습니다.",
+                            content = "총 요약한 지문 개수와 현재 내 등급을 보여줍니다. 오른쪽 등급 카드를 누르면 각 등급이 되는 조건과 다음 등급으로 올라가기 위한 목표를 확인할 수 있습니다.",
                             currentStep = 2,
                             totalSteps = 4,
                             onNext = { currentTutorialStep = 3 },
@@ -1049,7 +1049,7 @@ fun StatsScreen(
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         Text(
-                            text = "↑ 장르별 비율 차트",
+                            text = "↑ 장르별 비율 그래프",
                             color = Color.White,
                             fontWeight = FontWeight.Bold,
                             fontSize = 16.sp
@@ -1057,7 +1057,7 @@ fun StatsScreen(
 
                         TutorialGuideCard(
                             title = "문학 vs 비문학 비율 📊",
-                            content = "문학과 비문학 학습 비율을 Segmented Bar Chart로 모니터링할 수 있습니다. 한쪽 분야에 치우치지 않게 균형 있는 요약 독해 훈련을 지속해보세요.",
+                            content = "문학과 비문학 학습 비율을 비율 그래프로 한눈에 볼 수 있습니다. 한쪽 분야에 치우치지 않게 균형 있는 요약 독해 연습을 해보세요.",
                             currentStep = 3,
                             totalSteps = 4,
                             onNext = { currentTutorialStep = 4 },
@@ -1084,7 +1084,7 @@ fun StatsScreen(
                     ) {
                         TutorialGuideCard(
                             title = "저장된 노트 보관소 📓",
-                            content = "지금까지 제출하여 AI 첨삭을 받은 이력 리스트입니다. 카드를 눌러 상세 분석 보고서를 다시 읽을 수 있으며, 노트를 삭제하려면 왼쪽으로 부드럽게 스와이프(밀기)하시면 삭제됩니다.",
+                            content = "지금까지 제출해서 AI 첨삭을 받은 학습 노트 목록입니다. 노트를 누르면 AI 분석 결과를 다시 볼 수 있으며, 지우고 싶다면 왼쪽으로 밀어서 삭제할 수 있습니다.",
                             currentStep = 4,
                             totalSteps = 4,
                             onNext = {

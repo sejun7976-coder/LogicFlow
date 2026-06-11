@@ -772,7 +772,7 @@ fun ReadingScreen(
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         Text(
-                            text = "↑ 난이도 필터링",
+                            text = "↑ 난이도 골라보기",
                             color = Color.White,
                             fontWeight = FontWeight.Bold,
                             fontSize = 16.sp
@@ -780,7 +780,7 @@ fun ReadingScreen(
 
                         TutorialGuideCard(
                             title = "난이도 선택 필터 ⚡",
-                            content = "상, 중, 하 난이도를 터치하여 지문 목록을 필터링할 수 있습니다. 처음 시작할 때는 '하' 난이도부터 차근차근 시작해보는 것을 권장합니다.",
+                            content = "상, 중, 하 난이도를 눌러서 원하는 난이도의 지문만 골라 볼 수 있습니다. 처음 시작할 때는 '하' 난이도부터 차근차근 시작해 보세요.",
                             currentStep = 1,
                             totalSteps = 2,
                             onNext = { currentTutorialStep = 2 },
@@ -807,7 +807,7 @@ fun ReadingScreen(
                     ) {
                         TutorialGuideCard(
                             title = "지문 카드 선택 📄",
-                            content = "원하는 지문을 클릭하면 독해 타이머와 함께 요약 작성 화면이 열립니다. 권장 시간을 확인하고 도전해보세요!",
+                            content = "원하는 지문을 누르면 시간 측정기(타이머)와 함께 요약글을 쓰는 화면이 열립니다. 권장 시간 안에 읽고 요약해 보세요!",
                             currentStep = 2,
                             totalSteps = 2,
                             onNext = {

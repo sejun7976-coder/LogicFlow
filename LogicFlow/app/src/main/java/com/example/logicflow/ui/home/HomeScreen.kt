@@ -972,7 +972,7 @@ fun HomeScreen(
                             verticalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
                             Text(
-                                text = "↑ 오늘의 주요 행동",
+                                text = "↑ 오늘 학습하러 가기",
                                 color = Color.White,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 16.sp
@@ -980,7 +980,7 @@ fun HomeScreen(
                             
                             TutorialGuideCard(
                                 title = "1단계: 독해 요약 시작하기 📖",
-                                content = "앱을 켜고 가장 먼저 해야 할 일입니다! 이 카드 영역에서 '요약능력 기르러 가기' 버튼을 눌러 오늘의 지문을 확인하고 요약 훈련을 시작해 보세요.",
+                                content = "앱을 켜고 가장 먼저 해야 할 일입니다! 이 카드 영역에서 '요약능력 기르러 가기' 버튼을 눌러 오늘의 지문을 확인하고 요약 연습을 시작해 보세요.",
                                 currentStep = 1,
                                 totalSteps = 3,
                                 onNext = { viewModel.setTutorialStep(2) },
@@ -1006,8 +1006,8 @@ fun HomeScreen(
                             verticalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
                             TutorialGuideCard(
-                                title = "2단계: 학습 스트릭 & 주간 성취도 🔥",
-                                content = "매일 요약을 수행하여 스트릭을 유지해 보세요. 주간 학습 성취도 차트에서는 본인이 어떤 종류(문학/비문학)의 지문을 학습했는지 누적 성취도를 확인할 수 있습니다.",
+                                title = "2단계: 연속 학습일 & 주간 학습 현황 🔥",
+                                content = "매일 요약을 완료하여 연속 학습 기록을 쌓아보세요. 주간 학습 현황 그래프에서는 내가 이번 주에 어떤 종류(문학/비문학)의 지문을 공부했는지 확인할 수 있습니다.",
                                 currentStep = 2,
                                 totalSteps = 3,
                                 onNext = { viewModel.setTutorialStep(3) },
@@ -1015,7 +1015,7 @@ fun HomeScreen(
                             )
 
                             Text(
-                                text = "↓ 학습 상태 및 통계 위치",
+                                text = "↓ 연속 학습일 및 통계 위치",
                                 color = Color.White,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 16.sp
@@ -1041,7 +1041,7 @@ fun HomeScreen(
                         ) {
                             TutorialGuideCard(
                                 title = "3단계: 오늘의 요약 팁 확인 💡",
-                                content = "요약을 작성하는 데 어려움이 있다면 '오늘의 팁' 카드를 터치해 보세요! 유용한 요약 비법과 동양의 지혜로운 속담을 읽어보실 수 있습니다.",
+                                content = "요약 작성이 어렵다면 '오늘의 팁' 카드를 눌러보세요! 유용한 요약 방법과 지혜로운 속담을 확인하실 수 있습니다.",
                                 currentStep = 3,
                                 totalSteps = 3,
                                 onNext = { viewModel.completeTutorial() },
